@@ -1,5 +1,3 @@
 package frc.robot.subsystems.drive.effector;
 
-public class EffectorMotorIOSim {
-    
-}
+public class EffectorMotorIOSim {}
