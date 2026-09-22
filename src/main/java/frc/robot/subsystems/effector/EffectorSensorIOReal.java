@@ -1,4 +1,4 @@
-package frc.robot.subsystems.drive.effector;
+package frc.robot.subsystems.effector;
 
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.hardware.CANrange;
