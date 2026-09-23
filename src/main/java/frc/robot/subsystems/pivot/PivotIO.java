@@ -1,12 +1,12 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ElevatorIO {
+public interface PivotIO {
 
   @AutoLog
-  public class ElevatorIOInputs {
+  public class PivotIOInputs {
     public Rotation2d position = new Rotation2d(0);
     public double velocity = 0;
     public double voltage = 0;
@@ -17,7 +17,7 @@ public interface ElevatorIO {
   public default void setVoltage(double v) {}
   ;
 
-  public default void updateInputs(ElevatorIOInputs inputs) {}
+  public default void updateInputs(PivotIOInputs inputs) {}
   ;
 
   public default void setGoal(Rotation2d goal) {}

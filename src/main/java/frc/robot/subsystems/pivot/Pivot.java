@@ -1,13 +1,13 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends SubsystemBase {
-  private ElevatorIO io;
-  private static Elevator instance;
-  private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+public class Pivot extends SubsystemBase {
+  private PivotIO io;
+  private static Pivot instance;
+  private PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
 
   public enum Setpoints {
     S1,
@@ -15,18 +15,18 @@ public class Elevator extends SubsystemBase {
     S3,
   }
 
-  public Elevator(ElevatorIO eIo) {
+  public Pivot(PivotIO eIo) {
     this.io = eIo;
     instance = this;
     io.updateInputs(inputs);
   }
 
-  public static Elevator getInstance() {
+  public static Pivot getInstance() {
     return instance;
   }
 
-  public static Elevator Initialize(ElevatorIO io) {
-    if (instance == null) instance = new Elevator(io);
+  public static Pivot Initialize(PivotIO io) {
+    if (instance == null) instance = new Pivot(io);
     return instance;
   }
 
@@ -41,6 +41,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("elevator", inputs);
+    Logger.processInputs("Pivot", inputs);
   }
 }
