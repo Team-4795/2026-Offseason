@@ -1,3 +1,3 @@
 package frc.robot.subsystems.effector;
 
-public class EffectorMotorIOReal {}
+public class EffectorIOSim {}
