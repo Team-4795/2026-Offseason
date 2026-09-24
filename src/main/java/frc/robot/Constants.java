@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -17,6 +18,17 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final Mode replayMode = Mode.REPLAY;
+
+  public static final boolean tuningMode = true;
+
+  public static class OIConstants {
+    public static final CommandXboxController driverController = new CommandXboxController(0);
+    public static final CommandXboxController operatorController = new CommandXboxController(1);
+    public static final double KAxisDeadband = 0.1;
+    public static final double OperatorLAxisDeadband = 0.3;
+    public static double kAxisDeadband = 0.1;
+  }
 
   public static enum Mode {
     /** Running on a real robot. */
