@@ -34,7 +34,7 @@ public class Pivot extends SubsystemBase {
     io.setVoltage(v);
   }
 
-  public void setGoal(Rotation2d goal) {
+  public void setGoal(double goal) {
     io.setGoal(goal);
   }
 

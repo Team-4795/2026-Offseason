@@ -7,11 +7,11 @@ public interface PivotIO {
 
   @AutoLog
   public class PivotIOInputs {
-    public Rotation2d position = new Rotation2d(0);
+    public double position = 0;
     public double velocity = 0;
     public double voltage = 0;
     public double current = 0;
-    public Rotation2d goal = new Rotation2d(0);
+    public double goal = 0;
   }
 
   public default void setVoltage(double v) {}
@@ -20,7 +20,9 @@ public interface PivotIO {
   public default void updateInputs(PivotIOInputs inputs) {}
   ;
 
-  public default void setGoal(Rotation2d goal) {}
+  public default void Initialize() {}
+
+  public default void setGoal(double goal) {}
   ;
 
   public default Rotation2d getPosition() {
