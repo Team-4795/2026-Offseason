@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Effector extends SubsystemBase {
   private EffectorIO effectorIo;
-  
+
   private static Effector instance;
 
   public static Effector getInstance() {
@@ -16,7 +16,7 @@ public class Effector extends SubsystemBase {
     instance = this;
   }
 
-    public static Effector Initialize(EffectorIO effectorIo) {
+  public static Effector Initialize(EffectorIO effectorIo) {
     if (instance == null) {
       instance = new Effector(effectorIo);
     }
@@ -24,6 +24,6 @@ public class Effector extends SubsystemBase {
   }
 
   public void setEffectorVoltage(double volts) {
-    effectorIo.setvoltage(volts);
+    effectorIo.setVoltage(volts);
   }
 }
