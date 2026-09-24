@@ -27,7 +27,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -61,7 +60,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        pivot = new Pivot(new PivotIOReal());
+        pivot =
+            Pivot.initialize(
+                new PivotIOReal()); // the regular constructor probably would work in theory but we
+        // made the initialize method for a reason
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -91,7 +93,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        pivot = new Pivot(new PivotIOSim());
+        pivot = Pivot.initialize(new PivotIOSim());
         break;
 
       default:
@@ -103,7 +105,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        pivot = new Pivot(new PivotIOReal());
+        pivot = Pivot.initialize(new PivotIOReal());
         break;
     }
 

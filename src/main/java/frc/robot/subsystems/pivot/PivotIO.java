@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface PivotIO {
-
   @AutoLog
   public class PivotIOInputs {
     public double position = 0;
@@ -15,18 +14,17 @@ public interface PivotIO {
   }
 
   public default void setVoltage(double v) {}
-  ;
 
   public default void updateInputs(PivotIOInputs inputs) {}
-  ;
 
-  public default void Initialize() {}
+  public default void initialize() {}
 
   public default void setGoal(double goal) {}
-  ;
+
+  public default void updateMotionProfile() {}
 
   public default Rotation2d getPosition() {
-    return new Rotation2d();
+    return Rotation2d.kZero;
   }
   ;
 }
