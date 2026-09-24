@@ -1,23 +1,18 @@
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
+package frc.robot.subsystems.elevator;
 
-public static final double kD = 0;
-    public static final double kI = 0;
-    public static final double kP = 0; 
-    public static final int rightDeviceID = 0;
-    public static final int leftDeviceID = 0;
-    public static final double ks = 0;
-    public static final double kg = 0;
-    public static final double kv = 0;
-    public static final double MAX_ACCELERATION = 0;
-    public static final double MAX_VELOCITY = 0;
-    public static final double CORAL_L4_SETPOINT = 0.7097808122634888 + Units.inchesToMeters(1); 
-    public static final double CORAL_L3_SETPOINT = (0.098505221 + Units.inchesToMeters(2)) / 2.0;
-    public static final double CORAL_L2_SETPOINT = 0.207 + Units.inchesToMeters(2);
-    public static final double CORAL_L1_SETPOINT = 0;
-    public static final double ALGEA_SETPOINT = 0.19420458376407623 - Units.inchesToMeters(1);
-    public static final double HIGH_ALGAE_SETPOINT = 0.12916289269924164;
-    public static final double PROCESSOR_SETPOINT = 0.19420458376407623 - Units.inchesToMeters(2);
-    public static final double NET_SETPOINT = 0.70;
+public class ElevatorConstants {
+    // we don't need setpoints right now
+    public static final int CAN_ID_LEFT = 0;
+    public static final int CAN_ID_RIGHT = 0;
+
     public static final double GOAL_TOLERANCE = 0.02;
     public static final double STOW = 0.005;
+
+    public static final double kD = 0;
+    public static final double kI = 0;
+    public static final double kP = 0; 
+    public static final double kG = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+}
