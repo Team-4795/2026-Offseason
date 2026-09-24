@@ -41,7 +41,9 @@ public class RobotContainer {
   private final Pivot pivot;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
+  private final CommandXboxController m_operatorController =
+      Constants.OIConstants.operatorController;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -143,25 +145,25 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> -m_driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    m_driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
                 () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    m_driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    m_driverController
         .b()
         .onTrue(
             Commands.runOnce(
