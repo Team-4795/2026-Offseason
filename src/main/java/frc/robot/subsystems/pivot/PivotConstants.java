@@ -9,7 +9,9 @@ public final class PivotConstants {
   public static final double MIN_ANGLE = 0.01;
   public static final double MAX_ANGLE = 0.5;
 
-  public static final double GEARING = 0;
+  public static final double STOW_ANGLE = 0.0;
+
+  public static final double GEARING = 1;
 
   public static final double kP = 0.0;
   public static final double kI = 0.0;
