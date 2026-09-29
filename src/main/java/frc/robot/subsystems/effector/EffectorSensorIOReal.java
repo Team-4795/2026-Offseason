@@ -9,8 +9,7 @@ public class EffectorSensorIOReal implements EffectorSensorIO {
   private final CANrange sensor = new CANrange(SensorConstants.SENSOR_ID);
   CANrangeConfiguration config = new CANrangeConfiguration();
 
-  public
-  EffectorSensorIOReal() { 
+  public EffectorSensorIOReal() {
     // we need to configure this thing to act as a beam-break sensor, do some research on that
     config.FovParams.FOVRangeX = SensorConstants.FOV_X;
     config.FovParams.FOVRangeY = SensorConstants.FOV_Y;

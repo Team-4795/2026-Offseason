@@ -24,6 +24,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.effector.*;
+import frc.robot.subsystems.effector.Effector;
+import frc.robot.subsystems.effector.EffectorIOReal;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -35,7 +38,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-
+  private Effector effector;
   // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
@@ -58,7 +61,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-
+        effector = new Effector(new EffectorIOReal());
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -87,10 +90,14 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        effector = new Effector(new EffectorIOSim());
+
         break;
 
       default:
         // Replayed robot, disable IO implementations
+        effector = new Effector(new EffectorIOReal());
+
         drive =
             new Drive(
                 new GyroIO() {},
@@ -138,6 +145,7 @@ public class RobotContainer {
             () -> -m_driverController.getLeftY(),
             () -> -m_driverController.getLeftX(),
             () -> -m_driverController.getRightX()));
+    effector.setDefaultCommand(Commands.runOnce(() -> effector.setEffectorVoltage(0), effector));
 
     // Lock to 0° when A button is held
     m_driverController
@@ -162,6 +170,9 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+    m_driverController
+        .y()
+        .whileTrue(Commands.runOnce(() -> effector.setEffectorVoltage(8.0), effector));
   }
 
   /**

@@ -10,4 +10,17 @@ public class EffectorIOSim implements EffectorIO {
           LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, 2),
           DCMotor.getKrakenX60(1));
   private double currentVoltage = 0;
+
+  @Override
+  public void setVoltage(double voltage) {
+    currentVoltage = voltage;
+    effectorMotor.setInputVoltage(voltage);
+  }
+
+  @Override
+  public void updateInputs(effectorIOInputs inputs) {
+    inputs.position = effectorMotor.getAngularPositionRad();
+    inputs.velocity = effectorMotor.getAngularVelocityRPM();
+    inputs.voltage = currentVoltage;
+  }
 }
