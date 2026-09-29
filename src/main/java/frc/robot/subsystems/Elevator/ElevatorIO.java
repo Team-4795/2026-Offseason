@@ -8,9 +8,7 @@ public interface ElevatorIO {
   public static class ElevatorIOInputs {
     public double voltage = 0;
     public double setpointPosition = 0;
-    public double setpointVoltage;
     public double goalPosition = 0;
-    public double goalVoltage;
     public double current = 0;
   }
 
