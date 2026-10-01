@@ -145,7 +145,7 @@ public class RobotContainer {
             () -> -m_driverController.getLeftY(),
             () -> -m_driverController.getLeftX(),
             () -> -m_driverController.getRightX()));
-    effector.setDefaultCommand(Commands.runOnce(() -> effector.setEffectorVoltage(0), effector));
+    effector.setDefaultCommand(Commands.run(() -> effector.setEffectorVoltage(0), effector));
 
     // Lock to 0° when A button is held
     m_driverController
@@ -172,7 +172,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     m_driverController
         .y()
-        .whileTrue(Commands.runOnce(() -> effector.setEffectorVoltage(8.0), effector));
+        .whileTrue(Commands.run(() -> effector.setEffectorVoltage(8.0), effector));
   }
 
   /**

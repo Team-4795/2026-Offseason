@@ -3,6 +3,7 @@ package frc.robot.subsystems.effector;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.littletonrobotics.junction.Logger;
 
 public class EffectorIOSim implements EffectorIO {
   private DCMotorSim effectorMotor =
@@ -15,6 +16,7 @@ public class EffectorIOSim implements EffectorIO {
   public void setVoltage(double voltage) {
     currentVoltage = voltage;
     effectorMotor.setInputVoltage(voltage);
+    Logger.recordOutput("voltageImp", voltage);
   }
 
   @Override
@@ -22,5 +24,6 @@ public class EffectorIOSim implements EffectorIO {
     inputs.position = effectorMotor.getAngularPositionRad();
     inputs.velocity = effectorMotor.getAngularVelocityRPM();
     inputs.voltage = currentVoltage;
+    effectorMotor.update(0.02);
   }
 }
