@@ -173,7 +173,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     elevator.setDefaultCommand(
-        Commands.runOnce(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
+        Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
+    m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
   }
 
   /**

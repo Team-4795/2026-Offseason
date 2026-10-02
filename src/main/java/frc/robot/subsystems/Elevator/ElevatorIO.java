@@ -8,11 +8,8 @@ public interface ElevatorIO {
   public static class ElevatorIOInputs {
     public double voltage = 0;
     public double setpointPosition = 0;
-    public double goalPosition = 0;
     public double current = 0;
   }
-
-  public default void setVoltage(double v) {}
 
   public default void setGoal(double v) {}
 
@@ -21,6 +18,4 @@ public interface ElevatorIO {
   }
 
   public default void updateInputs(ElevatorIOInputs inputs) {}
-
-  public default void updateMotionProfile() {}
 }

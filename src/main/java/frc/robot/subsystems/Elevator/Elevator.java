@@ -31,7 +31,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    io.updateMotionProfile();
     Logger.processInputs("Elevator", inputs);
   }
 }
