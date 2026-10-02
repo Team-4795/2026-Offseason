@@ -1,7 +1,9 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.Elevator;
 
 public class ElevatorConstants {
   // we don't need setpoints right now
+  public static final double maxDistance = 0;
+  public static final double minDistance = 0;
   public static final int CAN_ID_LEFT = 0;
   public static final int CAN_ID_RIGHT = 0;
 
