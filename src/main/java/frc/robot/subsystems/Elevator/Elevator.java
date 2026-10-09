@@ -1,37 +1,14 @@
-package frc.robot.subsystems.elevator;
 package frc.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
+@SuppressWarnings("unused")
 public class Elevator extends SubsystemBase {
-  private static Elevator instance;
-  private ElevatorIO io;
-  private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private static ElevatorIO elevatorIO;
+  private static ElevatorIO.ElevatorIOInputs inputs = new ElevatorIO.ElevatorIOInputs();
 
-  public static Elevator initialize(ElevatorIO io) {
-    if (instance == null) {
-      instance = new Elevator(io);
-    }
-    return instance;
-  }
-
-  public Elevator(ElevatorIO i) {
-    this.io = i;
-    io.updateInputs(inputs);
-  }
-
-  public static Elevator getInstance() {
-    return instance;
-  }
-
-  public void setGoal(double g) {
-    io.setGoal(g);
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
+  public Object setGoal(double rightX) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setGoal'");
   }
 }

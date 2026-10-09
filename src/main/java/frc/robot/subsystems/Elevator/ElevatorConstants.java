@@ -6,7 +6,6 @@ public class ElevatorConstants {
   public static final double minDistance = 0;
   public static final int CAN_ID_LEFT = 0;
   public static final int CAN_ID_RIGHT = 0;
-
   public static final double GOAL_TOLERANCE = 0.02;
   public static final double STOW = 0.005;
 
@@ -36,4 +35,7 @@ public class ElevatorConstants {
   public static final double position2 = 2.0f;
 
   public static final int GEARING = 1;
+
+  public static final int primaryElevatorMotorId = 0;
+  public static final int secondaryElevatorMotorId = 0;
 }

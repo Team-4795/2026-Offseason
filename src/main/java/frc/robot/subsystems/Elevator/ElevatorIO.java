@@ -15,5 +15,18 @@ public interface ElevatorIO {
     public double elevatorLeftPositionMeters = 0.0;
     public double elevatorLeftVelocityMetersPerSecond = 0.0;
     public double elevatorLeftCurrent = 0.0;
+
+    public ElevatorIOInputs(Object object) {
+      // TODO Auto-generated constructor stub
+    }
+
+    public ElevatorIOInputs() {
+      // TODO Auto-generated constructor stub
+    }
+
+    public Object setGoal(double rightX) {
+      // TODO Auto-generated method stub
+      throw new UnsupportedOperationException("Unimplemented method 'setGoal'");
+    }
   }
 }
