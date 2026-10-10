@@ -9,9 +9,9 @@ public final class PivotConstants {
   public static final double MIN_ANGLE = 0.01;
   public static final double MAX_ANGLE = 0.5;
 
-  public static final double STOW_ANGLE = 0.0;
+  public static final double STOW_ANGLE = 0.01;
 
-  public static final double GEARING = 1;
+  public static final double GEARING = 1.0 / 8;
 
   public static final double kP = 0.0;
   public static final double kI = 0.0;
@@ -21,14 +21,23 @@ public final class PivotConstants {
   public static final double kS = 0.0;
   public static final double kV = 0.0;
 
-  public static final double SIM_kP = 0.0;
-  public static final double SIM_kI = 0.0;
-  public static final double SIM_kD = 0.0;
-  public static final double SIM_kA = 0.0;
-  public static final double SIM_kG = 0.0;
-  public static final double SIM_kS = 0.0;
-  public static final double SIM_kV = 0.0;
+  // :(
+  // public static final double SIM_kP = 15; // 50
+  // public static final double SIM_kI = 0;
+  // public static final double SIM_kD = 75; // 18
+  // public static final double SIM_kA = 0;
+  // public static final double SIM_kG = 0;
+  // public static final double SIM_kS = 0;
+  // public static final double SIM_kV = 0.5;
 
-  public static final double MAX_V = 0.0;
-  public static final double MAX_A = 0.0;
+  public static final double SIM_kP = 10;
+  public static final double SIM_kI = 0;
+  public static final double SIM_kD = 30; // no touch
+  public static final double SIM_kA = 0;
+  public static final double SIM_kG = 0;
+  public static final double SIM_kS = 0;
+  public static final double SIM_kV = 0;
+
+  public static final double MAX_V = 1; // 2
+  public static final double MAX_A = 1; // 1.5
 }

@@ -35,8 +35,8 @@ public class Pivot extends SubsystemBase {
     io.setVoltage(v);
   }
 
-  public void setGoal(double goal) {
-    io.setGoal(goal);
+  public void setGoal(double goalRots) {
+    io.setGoal(goalRots);
   }
 
   @Override

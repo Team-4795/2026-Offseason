@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -15,9 +16,9 @@ public class PivotIOReal implements PivotIO {
   /* general comments:
    * careful with your capitalization and naming
    *
-   * add:
-   * logged tunables
-   * configure method (for tuning)
+   * TODO:
+   * add logged tunables
+   * add configure method (for tuning)
    */
 
   private final TalonFX motor = new TalonFX(PivotConstants.CAN_ID_1);
@@ -31,6 +32,10 @@ public class PivotIOReal implements PivotIO {
   private final StatusSignal<AngularVelocity> velocity = motor.getVelocity(); // rps
   private final StatusSignal<Voltage> voltage = motor.getMotorVoltage();
   private final StatusSignal<Current> current = motor.getTorqueCurrent();
+
+  // i don't even know if these are the right ones
+  private final StatusSignal<Double> setpointPos = motor.getClosedLoopReference();
+  private final StatusSignal<Double> setpointVel = motor.getClosedLoopReferenceSlope();
 
   public PivotIOReal() { // just make these normal constructors
     // these are not that important but good to have
@@ -49,6 +54,9 @@ public class PivotIOReal implements PivotIO {
     configs.Slot0.kG = PivotConstants.kG;
     configs.Slot0.kS = PivotConstants.kS;
     configs.Slot0.kV = PivotConstants.kV;
+
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     motor.getConfigurator().apply(configs);
   }
 
@@ -64,12 +72,24 @@ public class PivotIOReal implements PivotIO {
   }
 
   @Override
+  public double getPosition() {
+    return position.getValueAsDouble();
+  }
+
+  @Override
+  public double getVelocity() {
+    return velocity.getValueAsDouble();
+  }
+
+  @Override
   public void updateInputs(PivotIOInputs inputs) {
-    BaseStatusSignal.refreshAll(position, velocity, voltage, current);
+    BaseStatusSignal.refreshAll(position, velocity, voltage, current, setpointPos, setpointVel);
     inputs.velocity = velocity.getValueAsDouble();
     inputs.current = current.getValueAsDouble();
     inputs.goal = goal;
     inputs.position = position.getValueAsDouble();
     inputs.voltage = voltage.getValueAsDouble();
+    inputs.setpointPos = setpointPos.getValueAsDouble();
+    inputs.setpointVel = setpointVel.getValueAsDouble();
   }
 }
