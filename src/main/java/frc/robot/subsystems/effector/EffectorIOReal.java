@@ -8,8 +8,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.effector.EffectorConstants.SensorConstants;
 
 public class EffectorIOReal implements EffectorIO {
-  // don't use onboard pid for sparks
-  // do we even need pid?
   private SparkMax effectorMotor =
       new SparkMax(SensorConstants.SENSOR_ID, SparkLowLevel.MotorType.kBrushless);
   private double currentVoltage = 0;
@@ -20,7 +18,7 @@ public class EffectorIOReal implements EffectorIO {
     config.idleMode(IdleMode.kCoast);
     config.smartCurrentLimit(EffectorConstants.CURRENT_LIMIT);
 
-    // don't forget to apply the config
+    // don't forget to apply the config!!!
   }
 
   @Override
@@ -30,9 +28,9 @@ public class EffectorIOReal implements EffectorIO {
   }
 
   @Override
-  public void updateInputs(effectorIOInputs inputs) {
+  public void updateInputs(EffectorIOInputs inputs) {
     inputs.position = effectorEncoder.getPosition();
     inputs.voltage = currentVoltage;
-    inputs.velocity = effectorEncoder.getVelocity();
+    inputs.velocity = effectorEncoder.getVelocity() / 60.0; // rps
   }
 }

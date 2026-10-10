@@ -5,7 +5,10 @@ import org.littletonrobotics.junction.Logger;
 
 public class Effector extends SubsystemBase {
   private EffectorIO io;
-  private effectorIOInputsAutoLogged inputs;
+
+  // also include EffectorSensorIO as part of it
+
+  private EffectorIOInputsAutoLogged inputs;
   private static Effector instance;
 
   public static Effector getInstance() {
@@ -15,7 +18,7 @@ public class Effector extends SubsystemBase {
   public Effector(EffectorIO io) {
     this.io = io;
     instance = this;
-    inputs = new effectorIOInputsAutoLogged();
+    inputs = new EffectorIOInputsAutoLogged();
   }
 
   public static Effector initialize(EffectorIO effectorIo) {

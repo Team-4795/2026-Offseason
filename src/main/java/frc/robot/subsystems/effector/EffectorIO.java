@@ -7,11 +7,12 @@ public interface EffectorIO {
   public default void setVoltage(double volts) {}
 
   @AutoLog
-  public class effectorIOInputs {
+  public class EffectorIOInputs {
+    // should also log current
     public double position = 0;
     public double voltage = 0;
     public double velocity = 0;
   }
 
-  public default void updateInputs(effectorIOInputs inputs) {}
+  public default void updateInputs(EffectorIOInputs inputs) {}
 }
