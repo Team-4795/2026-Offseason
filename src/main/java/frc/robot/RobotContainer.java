@@ -161,7 +161,7 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     m_driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
+    m_driverController.povDown().onTrue(Commands.runOnce(()->pivot.Configure(), pivot));
     // Reset gyro to 0° when B button is pressed
     m_driverController
         .b()
