@@ -22,6 +22,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -109,7 +110,6 @@ public class Drive extends SubsystemBase {
       new SwerveSetpointGenerator(
           PP_CONFIG, AngularVelocity.ofBaseUnits(4, Units.RotationsPerSecond));
   private SwerveSetpoint prevSetpoint;
-  private SwerveSetpoint nextSetpoint;
 
   public static Drive getInstance() {
     return instance;
@@ -173,8 +173,6 @@ public class Drive extends SubsystemBase {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
     prevSetpoint =
-        new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
-    nextSetpoint =
         new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
   }
 
@@ -387,9 +385,31 @@ public class Drive extends SubsystemBase {
   }
 
   /** Uses Pathplanner Swerve Setpoint Generator. */
-  public void driveWithSetpoint(ChassisSpeeds nextSpeeds) {
-    prevSetpoint = nextSetpoint;
-    nextSetpoint = setpointGenerator.generateSetpoint(prevSetpoint, nextSpeeds, 0.02);
-    runVelocity(nextSetpoint.robotRelativeSpeeds());
+  public void runVelocityWithSetpointGen(ChassisSpeeds nextSpeeds) {
+    prevSetpoint = setpointGenerator.generateSetpoint(prevSetpoint, nextSpeeds, 0.02);
+    SwerveModuleState[] setpointStates = prevSetpoint.moduleStates();
+
+    // Send setpoints to modules
+    for (int i = 0; i < 4; i++) {
+      modules[i].runSetpoint(setpointStates[i]);
+    }
+
+    // Log optimized setpoints (runSetpoint mutates each state)
+    Logger.recordOutput("SwerveStates/SSGSetpoints", setpointStates);
+  }
+
+  public void resetSetpoints() {
+    prevSetpoint =
+        new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
+  }
+
+  @AutoLogOutput(key = "DriveFeedForwards/TranslationFF")
+  public double calculateTranslationFF(double tError) {
+    return MathUtil.clamp(DriveConstants.kDriveFeedforward * tError, 0, 3);
+  }
+
+  @AutoLogOutput(key = "DriveFeedForwards/RotationFF")
+  public double calculateRotationFF(double rError) {
+    return MathUtil.clamp(DriveConstants.kSteerFeedforward * Math.abs(rError), 0, 3);
   }
 }

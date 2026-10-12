@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoAlignTest;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -26,6 +26,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.stateManager.StateManager;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -37,6 +38,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final StateManager manager;
 
   // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
@@ -63,6 +65,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        manager = StateManager.initialize();
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -92,6 +95,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        manager = StateManager.initialize();
         break;
 
       default:
@@ -103,6 +107,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        manager = StateManager.initialize();
         break;
     }
 
@@ -168,7 +173,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    autoAlignTest.whileTrue(new AutoAlignTest());
+    autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
   }
 
   /**

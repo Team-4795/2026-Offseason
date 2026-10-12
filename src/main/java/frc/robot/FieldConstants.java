@@ -11,10 +11,13 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.List;
 
 /**
@@ -32,6 +35,22 @@ public final class FieldConstants {
   public static final double fieldWidth =
       Units.inchesToMeters(315.5) + (isWPIField ? Units.inchesToMeters(3.0) : 0.0);
   public static final double tapeWidth = Units.inchesToMeters(2.0);
+
+  /** this one is weird */
+  public static final Translation2d allianceFlip(Translation2d translation) {
+    return new Translation2d(fieldLength - translation.getX(), translation.getY());
+  }
+
+  /** this one actually works like it should */
+  public static final Rotation2d allianceFlip(Rotation2d rotation) {
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+        return new Rotation2d(-rotation.getCos(), rotation.getSin());
+      else return rotation;
+    } else {
+      return rotation;
+    }
+  }
 
   // Dimensions for community and charging station, including the tape.
   public static final class Community {
@@ -178,6 +197,15 @@ public final class FieldConstants {
           new Translation3d(complexLowXCubes, nodeY[7], 0.0),
           new Translation3d(complexLowXCones, nodeY[8] + complexLowOuterYOffset, 0.0),
         };
+
+    public static final Translation2d[] redComplexLowTranslations =
+        new Translation2d[complexLowTranslations.length];
+
+    static {
+      for (int i = 0; i < complexLowTranslations.length; i++) {
+        redComplexLowTranslations[i] = allianceFlip(complexLowTranslations[i]);
+      }
+    }
   }
 
   // Dimensions for loading zone and substations, including the tape
