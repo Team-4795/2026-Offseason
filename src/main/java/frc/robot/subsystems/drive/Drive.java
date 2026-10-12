@@ -384,7 +384,7 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  /** Uses Pathplanner Swerve Setpoint Generator. */
+  /** Uses Pathplanner's swerve setpoint generator. */
   public void runVelocityWithSetpointGen(ChassisSpeeds nextSpeeds) {
     prevSetpoint = setpointGenerator.generateSetpoint(prevSetpoint, nextSpeeds, 0.02);
     SwerveModuleState[] setpointStates = prevSetpoint.moduleStates();
@@ -394,8 +394,12 @@ public class Drive extends SubsystemBase {
       modules[i].runSetpoint(setpointStates[i]);
     }
 
-    // Log optimized setpoints (runSetpoint mutates each state)
+    // Log setpoints
     Logger.recordOutput("SwerveStates/SSGSetpoints", setpointStates);
+  }
+
+  public void pathfindToPose(Pose2d targetPose) {
+    AutoBuilder.pathfindToPose(targetPose, DriveConstants.pathConstraints);
   }
 
   public void resetSetpoints() {
@@ -403,12 +407,10 @@ public class Drive extends SubsystemBase {
         new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
   }
 
-  @AutoLogOutput(key = "DriveFeedForwards/TranslationFF")
   public double calculateTranslationFF(double tError) {
     return MathUtil.clamp(DriveConstants.kDriveFeedforward * tError, 0, 3);
   }
 
-  @AutoLogOutput(key = "DriveFeedForwards/RotationFF")
   public double calculateRotationFF(double rError) {
     return MathUtil.clamp(DriveConstants.kSteerFeedforward * Math.abs(rError), 0, 3);
   }

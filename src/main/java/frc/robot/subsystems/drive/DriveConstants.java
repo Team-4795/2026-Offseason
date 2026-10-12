@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.util.Units;
 import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
@@ -14,4 +16,8 @@ public class DriveConstants {
 
   public static final double rotationTolerance = 0.001;
   public static final double translationTolerance = 0.02;
+
+  public static final PathConstraints pathConstraints =
+      new PathConstraints(4.8, 4.0, Units.rotationsToRadians(4), Units.rotationsToRadians(4));
+  public static final double pathfindHandoffDistance = 2.0;
 }

@@ -47,6 +47,7 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
+  private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -174,6 +175,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
+    ppPathfindTest.whileTrue(AutoCommands.ppPathfindToNode());
   }
 
   /**

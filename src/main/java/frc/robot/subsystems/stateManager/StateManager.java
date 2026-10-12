@@ -55,6 +55,10 @@ public class StateManager extends SubsystemBase {
     return closestNode;
   }
 
+  public double getNodeDistance() {
+    return closestNode.getDistance(drive.getPose().getTranslation());
+  }
+
   public Pose2d getClosestNodePose() {
     return new Pose2d(closestNode, FieldConstants.allianceFlip(Rotation2d.kZero));
   }
