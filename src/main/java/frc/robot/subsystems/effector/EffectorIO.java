@@ -6,6 +6,8 @@ public interface EffectorIO {
 
   public default void setVoltage(double volts) {}
 
+  public default void setGoal(double goal) {}
+
   @AutoLog
   public class EffectorIOInputs {
     // should also log current

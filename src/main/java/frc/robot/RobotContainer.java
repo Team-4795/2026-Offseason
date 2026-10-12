@@ -25,8 +25,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.effector.*;
-import frc.robot.subsystems.effector.Effector;
-import frc.robot.subsystems.effector.EffectorIOReal;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -61,7 +59,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        effector = new Effector(new EffectorIOReal());
+        effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -90,13 +88,13 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        effector = new Effector(new EffectorIOSim());
+        effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
 
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        effector = new Effector(new EffectorIOReal());
+        effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
 
         drive =
             new Drive(
