@@ -36,7 +36,17 @@ public class PivotIOReal implements PivotIO {
   // i don't even know if these are the right ones
   private final StatusSignal<Double> setpointPos = motor.getClosedLoopReference();
   private final StatusSignal<Double> setpointVel = motor.getClosedLoopReferenceSlope();
-
+  @Override
+  public void configure(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+      configs.Slot0.kP = kP;
+      configs.Slot0.kI = kI;
+      configs.Slot0.kD = kD;
+      configs.Slot0.kS = kS;
+      configs.Slot0.kV = kV;
+      configs.Slot0.kA = kA;
+      configs.Slot0.kG = kG;
+      motor.getConfigurator().apply(configs);
+    }
   public PivotIOReal() { // just make these normal constructors
     // these are not that important but good to have
     configs.Audio.BeepOnBoot = true;

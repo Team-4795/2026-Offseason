@@ -31,4 +31,6 @@ public interface PivotIO {
   }
 
   public default void updateMotionProfile() {}
+  public default void configure(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {};
+
 }
