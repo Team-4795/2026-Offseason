@@ -24,6 +24,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.effector.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -36,6 +39,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Pivot pivot;
   private final Effector effector;
   // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
@@ -59,6 +63,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        pivot =
+            Pivot.initialize(
+                new PivotIOReal()); // the regular constructor probably would work in theory but we
+        // made the initialize method for a reason
         effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -88,6 +96,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        pivot = Pivot.initialize(new PivotIOSim());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
 
         break;
@@ -103,6 +112,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        pivot = Pivot.initialize(new PivotIOReal());
         break;
     }
 
@@ -168,6 +178,12 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> -m_driverController.getRightX()));
     m_driverController
         .y()
         .whileTrue(Commands.run(() -> effector.setEffectorVoltage(8.0), effector));
