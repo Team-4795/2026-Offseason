@@ -175,6 +175,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
+    // ppPathfindTest.whileTrue(DriveCommands.pathfindToPose(manager.getClosestNodePose()));
+    // ppPathfindTest.whileTrue(DriveCommands.pathfindToPose(manager.getTestingAlignPose()));
     ppPathfindTest.whileTrue(AutoCommands.ppPathfindToNode());
   }
 
@@ -185,5 +187,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void onEnable() {
+    // manager.updatePathfindingDefaultPose();
   }
 }

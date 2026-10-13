@@ -1,9 +1,8 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.stateManager.StateManager;
 
 public class AutoCommands {
@@ -14,10 +13,14 @@ public class AutoCommands {
     return new AutoAlignTest();
   }
 
-  // TODO: pathfind to general area, then auto align for precise lineup?
+  // ts does NOT work properly and im pretty sure its a pathplanner issue
   public static Command ppPathfindToNode() {
-    return Commands.run(() -> drive.pathfindToPose(stateManager.getClosestNodePose()))
-        .onlyWhile(() -> (stateManager.getNodeDistance() > DriveConstants.pathfindHandoffDistance))
+    Pose2d pose = stateManager.getPathfindingTargetPose();
+    return DriveCommands.pathfindToPose(pose)
+        // return DriveCommands.pathfindToPose(stateManager.pathfindDefaultPose)
+        // .onlyWhile(() -> (stateManager.getNodeDistance() >
+        // DriveConstants.pathfindHandoffDistance))
+        .until(() -> stateManager.withinScoringZone(drive.getPose().getTranslation()))
         .andThen(autoAlignTest());
   }
 }

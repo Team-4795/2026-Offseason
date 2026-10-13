@@ -398,10 +398,6 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SSGSetpoints", setpointStates);
   }
 
-  public void pathfindToPose(Pose2d targetPose) {
-    AutoBuilder.pathfindToPose(targetPose, DriveConstants.pathConstraints);
-  }
-
   public void resetSetpoints() {
     prevSetpoint =
         new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));

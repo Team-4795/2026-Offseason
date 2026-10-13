@@ -1,7 +1,11 @@
 package frc.robot.subsystems.drive;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
@@ -19,5 +23,10 @@ public class DriveConstants {
 
   public static final PathConstraints pathConstraints =
       new PathConstraints(4.8, 4.0, Units.rotationsToRadians(4), Units.rotationsToRadians(4));
-  public static final double pathfindHandoffDistance = 2.0;
+  public static final double pathfindHandoffDistance = 6.0;
+
+  public static final Pose2d pathfindDefaultPose =
+      new Pose2d(
+          FieldConstants.allianceFlip(new Translation2d(FieldConstants.fieldLength - 1.7, 2.77)),
+          FieldConstants.allianceFlip(Rotation2d.kZero));
 }
