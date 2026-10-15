@@ -1,29 +1,36 @@
 package frc.robot.subsystems.Elevator;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class ElevatorIOSim implements ElevatorIO {
-  private ElevatorIOInputs inputs = new ElevatorIOInputs();
-  private PIDController leftController = new PIDController(0, 0, 0);
-  private ProfiledPIDController rightController = new ProfiledPIDController(0, 0, 0, null);
-  private ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0);
+  private ProfiledPIDController feedback =
+      new ProfiledPIDController(0.7, 0.5, 0.7, new TrapezoidProfile.Constraints(50, 10));
+  private ElevatorFeedforward feedforward = new ElevatorFeedforward(0.6, 0.3, 0.6);
 
-  private void updateInputs() {
-    // Update the inputs with simulated values so that the Elevator subsystems can use them for
-    // control and logging
-    inputs.elevatorLeftPositionMeters = 0; // Replace dis  simulated position
-    inputs.elevatorLeftVelocityMetersPerSecond = 0; // Replace dis  simulated velocity
-    inputs.elevatorLeftCurrent = 0; // Replace with  simulated current
-    inputs.elevatorRIghtPositionMeters = 0; // Replace with  simulated position
-    inputs.elevatorRightVelocityMetersPerSecond = 0; // Replace with  simulated velocity
-    inputs.elevatorRightCurrent = 0; // Replace with  simulated current
+  private final DCMotorSim motor =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.08, 1),
+          DCMotor.getKrakenX60(1));
+  private double voltage = 0.0;
+
+  @Override
+  public void setGoal(double goal) {
+    voltage =
+        feedback.calculate(motor.getAngularPositionRotations(), goal)
+            + feedforward.calculate(motor.getAngularVelocityRadPerSec());
+    motor.setInputVoltage(goal);
   }
 
-  private static final double MIN_HEIGHT = 0.0;
-  private static final double MAX_HEIGHT = 0.0;
-  private final ProfiledPIDController feedback =
-      new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
+  @Override
+  public void updateInputs(ElevatorIOInputs input) {
+    input.elevatorRIghtPositionMeters = motor.getAngularPositionRotations();
+    input.elevatorRightCurrent = motor.getCurrentDrawAmps();
+    input.ElevatorRightAppliedVolts = voltage;
+    input.elevatorRightVelocityMetersPerSecond = motor.getAngularVelocityRPM();
+  }
 }
