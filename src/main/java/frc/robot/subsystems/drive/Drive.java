@@ -384,7 +384,10 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  /** Uses Pathplanner's swerve setpoint generator. */
+  /**
+   * uses pathplanner's swerve setpoint generator. I don't know how to use this thing properly yet,
+   * will research
+   */
   public void runVelocityWithSetpointGen(ChassisSpeeds nextSpeeds) {
     prevSetpoint = setpointGenerator.generateSetpoint(prevSetpoint, nextSpeeds, 0.02);
     SwerveModuleState[] setpointStates = prevSetpoint.moduleStates();

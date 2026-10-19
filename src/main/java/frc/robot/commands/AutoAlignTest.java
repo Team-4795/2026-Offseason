@@ -14,10 +14,13 @@ import frc.robot.subsystems.stateManager.StateManager;
 import org.littletonrobotics.junction.Logger;
 
 public class AutoAlignTest extends Command {
-  private Drive drive = Drive.getInstance();
+  private Drive drive;
   private StateManager manager = StateManager.getInstance();
   private Pose2d currentPose;
   private Pose2d targetPose;
+  // private PPHolonomicDriveController controller = new
+  // PPHolonomicDriveController(DriveConstants.translationPIDConstants,
+  // DriveConstants.rotationPIDConstants);
   private PIDController translationController = new PIDController(5, 0, 0);
   private ProfiledPIDController rotationController =
       new ProfiledPIDController(
@@ -28,7 +31,8 @@ public class AutoAlignTest extends Command {
               Units.rotationsToRadians(DriveConstants.kSteerMaxV),
               Units.rotationsToRadians(DriveConstants.kSteerMaxA)));
 
-  public AutoAlignTest() {
+  public AutoAlignTest(Drive drive) {
+    this.drive = drive;
     addRequirements(drive);
   }
 

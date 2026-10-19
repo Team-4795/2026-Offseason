@@ -119,7 +119,7 @@ public final class FieldConstants {
   // Dimensions for grids and nodes
   public static final class Grids {
     // Scoring zone corners
-    public static final Translation2d wallCorner = new Translation2d(2.700, 0);
+    public static final Translation2d wallCorner = new Translation2d(3.3, 0);
     public static final Translation2d feederCorner = new Translation2d(0, 5.475);
 
     // X layout

@@ -38,7 +38,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final StateManager manager;
+  private final StateManager stateManager;
 
   // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
@@ -66,7 +66,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        manager = StateManager.initialize();
+        stateManager = StateManager.initialize();
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -96,7 +96,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        manager = StateManager.initialize();
+        stateManager = StateManager.initialize();
         break;
 
       default:
@@ -108,7 +108,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        manager = StateManager.initialize();
+        stateManager = StateManager.initialize();
         break;
     }
 
@@ -175,9 +175,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
-    // ppPathfindTest.whileTrue(DriveCommands.pathfindToPose(manager.getClosestNodePose()));
-    // ppPathfindTest.whileTrue(DriveCommands.pathfindToPose(manager.getTestingAlignPose()));
-    ppPathfindTest.whileTrue(AutoCommands.ppPathfindToNode());
+
+    ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
   }
 
   /**
@@ -187,9 +186,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  public void onEnable() {
-    // manager.updatePathfindingDefaultPose();
   }
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.stateManager;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,17 +13,24 @@ import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
 
 public class StateManager extends SubsystemBase {
+  public enum Zone {
+    GRID,
+    SUBSTATION,
+    NONE
+  }
+
   private static StateManager instance;
   private State state;
   private Drive drive = Drive.getInstance();
   private Pose2d closestNode = new Pose2d();
-  public Pose2d pathfindTargetPose = new Pose2d();
+  private Pose2d pathfindingTargetPose;
   private Translation2d wallCorner = new Translation2d();
   private Translation2d feederCorner = new Translation2d();
+  private Zone zone = Zone.NONE;
 
   private StateManager() {
-    // TODO temporary
     this.state = State.STOW;
+    updatePathfindingTargetPose();
   }
 
   public static StateManager getInstance() {
@@ -44,15 +52,6 @@ public class StateManager extends SubsystemBase {
     return state;
   }
 
-  /** testing purposes only */
-  // public Pose2d getTestingAlignPose() {
-  //   return new Pose2d(
-  //       new Translation2d(
-  //           FieldConstants.Community.chargingStationOuterX,
-  //           FieldConstants.Community.chargingStationRightY),
-  //       Rotation2d.kZero);
-  // }
-
   // TODO position offset of robot when aligning
   public Translation2d getClosestNodeTranslation() {
     return closestNode.getTranslation();
@@ -67,7 +66,11 @@ public class StateManager extends SubsystemBase {
   }
 
   public Pose2d getPathfindingTargetPose() {
-    return pathfindTargetPose;
+    return pathfindingTargetPose;
+  }
+
+  public Zone getZone() {
+    return this.zone;
   }
 
   public void updateClosestNodeTranslation() {
@@ -80,9 +83,6 @@ public class StateManager extends SubsystemBase {
               Rotation2d.kZero);
       wallCorner = FieldConstants.forceAllianceFlip(FieldConstants.Grids.wallCorner);
       feederCorner = FieldConstants.forceAllianceFlip(FieldConstants.Grids.feederCorner);
-      pathfindTargetPose =
-          new Pose2d(
-              new Translation2d(2.2, drive.getPose().getTranslation().getY()), Rotation2d.kZero);
     } else {
       closestNode =
           new Pose2d(
@@ -90,22 +90,26 @@ public class StateManager extends SubsystemBase {
               Rotation2d.k180deg);
       wallCorner = FieldConstants.Grids.wallCorner;
       feederCorner = FieldConstants.Grids.feederCorner;
-      pathfindTargetPose =
-          new Pose2d(
-              new Translation2d(
-                  FieldConstants.fieldLength - 2.2, drive.getPose().getTranslation().getY()),
-              Rotation2d.k180deg);
     }
   }
 
-  // /** don't use unless you know what you're doing...
-  //  * auto align relies on this thing not being called periodically
-  //  */
-  // public void updatePathfindingDefaultPose() {
-  //   pathfindDefaultPose =
-  //           new Pose2d(FieldConstants.allianceFlip(new Translation2d(FieldConstants.fieldLength -
-  // 1.7, 2.77)), FieldConstants.allianceFlip(Rotation2d.kZero));
-  // }
+  public void updatePathfindingTargetPose() {
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      pathfindingTargetPose =
+          new Pose2d(
+              new Translation2d(
+                  FieldConstants.fieldLength - 1.2,
+                  MathUtil.clamp(drive.getPose().getTranslation().getY(), 0.5, 4.8)),
+              Rotation2d.kZero);
+    } else {
+      pathfindingTargetPose =
+          new Pose2d(
+              new Translation2d(
+                  1.2, MathUtil.clamp(drive.getPose().getTranslation().getY(), 0.5, 4.8)),
+              Rotation2d.k180deg);
+    }
+  }
 
   public boolean withinScoringZone(Translation2d currentTranslation) {
     if (DriverStation.getAlliance().isPresent()
@@ -122,15 +126,41 @@ public class StateManager extends SubsystemBase {
     }
   }
 
+  // TODO add substation
+  public void updateZones() {
+    Translation2d currentTranslation = drive.getPose().getTranslation();
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      if ((currentTranslation.getY() < feederCorner.getY()
+              && currentTranslation.getY() > wallCorner.getY())
+          && (currentTranslation.getX() > wallCorner.getX()
+              && currentTranslation.getX() < feederCorner.getX())) {
+        zone = Zone.GRID;
+      } else {
+        zone = Zone.NONE;
+      }
+    } else {
+      if ((currentTranslation.getY() < feederCorner.getY()
+              && currentTranslation.getY() > wallCorner.getY())
+          && (currentTranslation.getX() < wallCorner.getX()
+              && currentTranslation.getX() > feederCorner.getX())) {
+        zone = Zone.GRID;
+      } else {
+        zone = Zone.NONE;
+      }
+    }
+  }
+
   @Override
   public void periodic() {
     updateClosestNodeTranslation();
-    Logger.recordOutput("StateManager/State", state);
-    Logger.recordOutput("StateManager/Nearest Node", getClosestNodePose());
-    // Logger.recordOutput("StateManager/Pathfinding Default Pose", pathfindDefaultPose);
-    Logger.recordOutput(
-        "Zones/In scoring zone?", withinScoringZone(drive.getPose().getTranslation()));
-    Logger.recordOutput("Zones/Scoring Wall Corner", wallCorner);
-    Logger.recordOutput("Zones/Scoring Feeder Corner", feederCorner);
+    updatePathfindingTargetPose();
+    updateZones();
+    Logger.recordOutput("State Manager/State", state);
+    Logger.recordOutput("State Manager/Nearest Node", getClosestNodePose());
+    Logger.recordOutput("State Manager/Pathfinding Default Pose", pathfindingTargetPose);
+    Logger.recordOutput("State Manager/Zones/Current Zone", zone);
+    Logger.recordOutput("State Manager/Zones/Scoring Wall Corner", wallCorner);
+    Logger.recordOutput("State Manager/Zones/Scoring Feeder Corner", feederCorner);
   }
 }
