@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Elevator.*;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -85,6 +86,8 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
+
+        elevator = new Elevator(null);
         break;
 
       case SIM:
@@ -99,11 +102,10 @@ public class RobotContainer {
         pivot = Pivot.initialize(new PivotIOSim());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
 
+        elevator = new Elevator(new ElevatorIOSim());
         break;
-
       default:
         // Replayed robot, disable IO implementations
-        effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
 
         drive =
             new Drive(
@@ -113,6 +115,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivot = Pivot.initialize(new PivotIOReal());
+
+        elevator = new Elevator(null);
         break;
     }
 
@@ -187,6 +191,10 @@ public class RobotContainer {
     m_driverController
         .y()
         .whileTrue(Commands.run(() -> effector.setEffectorVoltage(8.0), effector));
+
+    elevator.setDefaultCommand(
+        Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
+    m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
   }
 
   /**
