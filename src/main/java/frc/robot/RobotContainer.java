@@ -46,6 +46,7 @@ public class RobotContainer {
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
+  private final Elevator elevator;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -115,7 +116,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivot = Pivot.initialize(new PivotIOReal());
-
+        effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
         elevator = new Elevator(null);
         break;
     }
