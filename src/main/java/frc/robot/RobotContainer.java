@@ -48,6 +48,7 @@ public class RobotContainer {
   // Triggers
   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
+  private final Trigger overrideAutoAlignTest = new Trigger(m_driverController.rightBumper());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -177,6 +178,12 @@ public class RobotContainer {
     autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
 
     ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
+
+    overrideAutoAlignTest.whileTrue(
+        Commands.deferredProxy(
+            () ->
+                AutoCommands.ppPathfindWithOverride(
+                    () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
   }
 
   /**
