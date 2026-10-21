@@ -66,6 +66,15 @@ public final class FieldConstants {
     return new Translation2d(fieldLength - translation.getX(), translation.getY());
   }
 
+  public static final class Zones {
+    // Scoring zone corners
+    public static final Translation2d wallCorner = new Translation2d(3.3, 0);
+    public static final Translation2d feederCorner = new Translation2d(0, 5.475);
+
+    public static final Translation2d outerCorner = new Translation2d(13.25, 6.1);
+    public static final Translation2d innerCorner = new Translation2d(fieldLength, fieldWidth);
+  }
+
   // Dimensions for community and charging station, including the tape.
   public static final class Community {
     // Region dimensions
@@ -118,10 +127,6 @@ public final class FieldConstants {
 
   // Dimensions for grids and nodes
   public static final class Grids {
-    // Scoring zone corners
-    public static final Translation2d wallCorner = new Translation2d(3.3, 0);
-    public static final Translation2d feederCorner = new Translation2d(0, 5.475);
-
     // X layout
     public static final double outerX = Units.inchesToMeters(54.25);
     public static final double lowX =

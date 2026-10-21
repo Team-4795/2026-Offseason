@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -11,16 +12,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.stateManager.StateManager;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class AutoAlign extends Command {
+public class AlignSubstationWithOverride extends Command {
   private Drive drive;
   private StateManager manager = StateManager.getInstance();
   private Pose2d currentPose;
   private Pose2d targetPose;
-  // private PPHolonomicDriveController controller = new
-  // PPHolonomicDriveController(DriveConstants.translationPIDConstants,
-  // DriveConstants.rotationPIDConstants);
   private PIDController translationController = new PIDController(5, 0, 0);
   private ProfiledPIDController rotationController =
       new ProfiledPIDController(
@@ -31,8 +30,15 @@ public class AutoAlign extends Command {
               Units.rotationsToRadians(DriveConstants.kSteerMaxV),
               Units.rotationsToRadians(DriveConstants.kSteerMaxA)));
 
-  public AutoAlign(Drive drive) {
+  private DoubleSupplier xAxis;
+  private DoubleSupplier yAxis;
+
+  private double overrideMult;
+
+  public AlignSubstationWithOverride(Drive drive, DoubleSupplier x, DoubleSupplier y) {
     this.drive = drive;
+    xAxis = x;
+    yAxis = y;
     addRequirements(drive);
   }
 
@@ -54,7 +60,7 @@ public class AutoAlign extends Command {
     translationController.setTolerance(DriveConstants.translationTolerance);
 
     currentPose = drive.getPose();
-    targetPose = manager.getClosestNodePose();
+    targetPose = manager.getSubstationPose();
 
     // stop moving if within tolerance
     // idk if these lines are even necessary
@@ -62,7 +68,6 @@ public class AutoAlign extends Command {
     double rMult = rotationController.atSetpoint() ? 0.0 : 1.0;
 
     // calculating outputs
-
     double tError = targetPose.getTranslation().getDistance(currentPose.getTranslation());
     double rError = targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
 
@@ -78,21 +83,44 @@ public class AutoAlign extends Command {
     double translationX = direction.getCos() * translationOutput;
     double translationY = direction.getSin() * translationOutput;
 
-    ChassisSpeeds speeds =
+    // multiplier applied to PID controller outputs and driver inputs
+    // depending on how much driver joystick is moved
+    double x = Math.abs(xAxis.getAsDouble());
+    double y = Math.abs(yAxis.getAsDouble());
+
+    // from PID/ff
+    ChassisSpeeds feedbackSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            new ChassisSpeeds(tMult * translationX, tMult * translationY, rMult * rotationOutput),
+            new ChassisSpeeds(
+                tMult * translationX * (1.0 - x),
+                tMult * translationY * (1.0 - y),
+                rMult * rotationOutput),
             currentPose.getRotation());
 
-    drive.runVelocity(speeds);
+    // from driver controller
+    Translation2d linearVelocity =
+        DriveCommands.getLinearVelocityFromJoysticks(xAxis.getAsDouble(), yAxis.getAsDouble());
+
+    ChassisSpeeds driverSpeeds =
+        new ChassisSpeeds(
+            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * x,
+            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * y,
+            0);
+
+    // add them up and run them!
+    ChassisSpeeds totalSpeeds = driverSpeeds.plus(feedbackSpeeds);
+    drive.runVelocity(totalSpeeds);
+
     // drive.runVelocityWithSetpointGen(speeds);
 
-    Logger.recordOutput("Auto Align/Target Pose", targetPose);
-    Logger.recordOutput("Auto Align/vX", translationX);
-    Logger.recordOutput("Auto Align/vY", translationY);
-    Logger.recordOutput("Auto Align/omega", rotationOutput);
-    Logger.recordOutput("Auto Align/Translation Error (m)", tError);
-    Logger.recordOutput("Auto Align/Rotation Error (rad)", rError);
-    Logger.recordOutput("Auto Align/tMult", tMult);
-    Logger.recordOutput("Auto Align/rMult", rMult);
+    Logger.recordOutput("Align w. Override/Target Pose", targetPose);
+    Logger.recordOutput("Align w. Override/vX", translationX);
+    Logger.recordOutput("Align w. Override/vY", translationY);
+    Logger.recordOutput("Align w. Override/omega", rotationOutput);
+    Logger.recordOutput("Align w. Override/Translation Error (m)", tError);
+    Logger.recordOutput("Align w. Override/Rotation Error (rad)", rError);
+    Logger.recordOutput("Align w. Override/tMult", tMult);
+    Logger.recordOutput("Align w. Override/rMult", rMult);
+    Logger.recordOutput("Align w. Override/OverrideMult", overrideMult);
   }
 }

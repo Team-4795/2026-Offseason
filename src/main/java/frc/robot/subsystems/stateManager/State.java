@@ -14,9 +14,11 @@ public enum State {
   CONE_HIGH(0, 0),
   CONE_MID(0, 0),
   CONE_LOW(0, 0),
+
   CUBE_HIGH(0, 0),
   CUBE_MID(0, 0),
   CUBE_LOW(0, 0),
+
   HOLDING(0, 0),
   STOW(0, 0);
 

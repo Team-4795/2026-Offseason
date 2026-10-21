@@ -11,30 +11,24 @@ public class AutoCommands {
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command autoAlignTest() {
-    return new AutoAlign(drive);
+    return new AutoAlignNode(drive);
   }
 
-  // public static Command ppPathfindToPose() {
-  //   return Commands.sequence(
-  //     Commands.run(() -> {
-  //       Pose2d targetPose = stateManager.getPathfindingTargetPose();
-  //       DriveCommands.pathfindToPose(targetPose);
-  //     }, drive)
-  //   );
-  //   // return DriveCommands.pathfindToPose(targetPose)
-  //   //     .until(() -> stateManager.withinScoringZone(drive.getPose().getTranslation()))
-  //   //     .andThen(autoAlignTest());
-  // }
-
   public static Command ppPathfindToPose() {
-    return DriveCommands.pathfindToPose(stateManager.getPathfindingTargetPose())
+    return DriveCommands.pathfindToPose(stateManager.getNodePathfindingTargetPose())
         .until(() -> stateManager.getZone() == Zone.GRID)
         .andThen(autoAlignTest());
   }
 
-  public static Command ppPathfindWithOverride(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
-    return DriveCommands.pathfindToPose(stateManager.getPathfindingTargetPose())
+  public static Command pathfindNodeWithOverride(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+    return DriveCommands.pathfindToPose(stateManager.getNodePathfindingTargetPose())
         .until(() -> stateManager.getZone() == Zone.GRID)
-        .andThen(new AutoAlignWithOverride(drive, xSupplier, ySupplier));
+        .andThen(new AlignNodeWithOverride(drive, xSupplier, ySupplier));
+  }
+
+  public static Command pathfindSubstationWithOverride(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+    return DriveCommands.pathfindToPose(stateManager.getSubstationPathfindingTargetPose())
+        .until(() -> stateManager.getZone() == Zone.SUBSTATION)
+        .andThen(new AlignSubstationWithOverride(drive, xSupplier, ySupplier));
   }
 }

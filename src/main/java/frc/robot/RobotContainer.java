@@ -46,9 +46,10 @@ public class RobotContainer {
       Constants.OIConstants.operatorController;
 
   // Triggers
-  private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
-  private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
-  private final Trigger overrideAutoAlignTest = new Trigger(m_driverController.rightBumper());
+//   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
+//   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
+  private final Trigger autoAlignNodeOverride = new Trigger(m_driverController.rightBumper());
+  private final Trigger autoAlignSubstationOverride = new Trigger(m_driverController.leftBumper());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -175,14 +176,20 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
+    // autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
 
-    ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
+    // ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
 
-    overrideAutoAlignTest.whileTrue(
+    autoAlignNodeOverride.whileTrue(
         Commands.deferredProxy(
             () ->
-                AutoCommands.ppPathfindWithOverride(
+                AutoCommands.pathfindNodeWithOverride(
+                    () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
+
+    autoAlignSubstationOverride.whileTrue(
+        Commands.deferredProxy(
+            () ->
+                AutoCommands.pathfindSubstationWithOverride(
                     () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
   }
 
