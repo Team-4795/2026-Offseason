@@ -229,7 +229,10 @@ public class StateManager extends SubsystemBase {
   @Override
   public void periodic() {
     updatePoses();
-    Logger.recordOutput("State Manager/Setpoint", getSetpointWithUpdate());
+    Logger.recordOutput(
+        "State Manager/Setpoint",
+        getSetpointWithUpdate()); // TODO temporary, change to getSetpoint after intake/outtake
+    // exists
     Logger.recordOutput("State Manager/Scoring Mode", scoringMode);
     Logger.recordOutput("Scoring Level", scoringLevel);
     Logger.recordOutput("State Manager/Nearest Node", getClosestNodePose());

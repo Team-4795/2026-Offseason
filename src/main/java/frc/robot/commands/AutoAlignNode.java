@@ -18,9 +18,6 @@ public class AutoAlignNode extends Command {
   private StateManager manager = StateManager.getInstance();
   private Pose2d currentPose;
   private Pose2d targetPose;
-  // private PPHolonomicDriveController controller = new
-  // PPHolonomicDriveController(DriveConstants.translationPIDConstants,
-  // DriveConstants.rotationPIDConstants);
   private PIDController translationController = new PIDController(5, 0, 0);
   private ProfiledPIDController rotationController =
       new ProfiledPIDController(

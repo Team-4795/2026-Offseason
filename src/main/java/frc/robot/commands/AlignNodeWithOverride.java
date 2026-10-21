@@ -103,8 +103,14 @@ public class AlignNodeWithOverride extends Command {
 
     ChassisSpeeds driverSpeeds =
         new ChassisSpeeds(
-            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * x * DriveConstants.xJoystickAlignMult,
-            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * y * DriveConstants.yJoystickAlignMult,
+            linearVelocity.getX()
+                * drive.getMaxLinearSpeedMetersPerSec()
+                * x
+                * DriveConstants.xJoystickAlignMult,
+            linearVelocity.getY()
+                * drive.getMaxLinearSpeedMetersPerSec()
+                * y
+                * DriveConstants.yJoystickAlignMult,
             0);
 
     // add them up and run them!

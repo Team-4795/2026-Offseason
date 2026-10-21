@@ -384,10 +384,8 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  /**
-   * uses pathplanner's swerve setpoint generator. I don't know how to use this thing properly yet,
-   * will research
-   */
+  // TODO i cant get it to behave properly in sim, should try again on real robot
+  /** uses pathplanner's swerve setpoint generator */
   public void runVelocityWithSetpointGen(ChassisSpeeds nextSpeeds) {
     prevSetpoint = setpointGenerator.generateSetpoint(prevSetpoint, nextSpeeds, 0.02);
     SwerveModuleState[] setpointStates = prevSetpoint.moduleStates();
