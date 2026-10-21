@@ -27,6 +27,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.stateManager.StateManager;
+import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -40,16 +41,23 @@ public class RobotContainer {
   private final Drive drive;
   private final StateManager stateManager;
 
-  // Controller
+  // Controllers
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
 
   // Triggers
-//   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
-//   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
+  //   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
+  //   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
   private final Trigger autoAlignNodeOverride = new Trigger(m_driverController.rightBumper());
   private final Trigger autoAlignSubstationOverride = new Trigger(m_driverController.leftBumper());
+
+  private final Trigger cubeMode = new Trigger(m_driverController.povLeft());
+  private final Trigger coneMode = new Trigger(m_driverController.povRight());
+  private final Trigger clearScoringMode = new Trigger(m_driverController.y());
+
+  private final Trigger incrementScoringLevel = new Trigger(m_driverController.povUp());
+  private final Trigger decrementScoringLevel = new Trigger(m_driverController.povDown());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -191,6 +199,17 @@ public class RobotContainer {
             () ->
                 AutoCommands.pathfindSubstationWithOverride(
                     () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
+
+    coneMode.onTrue(AutoCommands.setConeMode());
+    cubeMode.onTrue(AutoCommands.setCubeMode());
+    clearScoringMode.onTrue(Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
+
+    m_driverController
+        .x()
+        .onTrue(Commands.runOnce(() -> stateManager.setSetpointTesting())); // TODO thingy
+
+    incrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.incrementScoringLevel()));
+    decrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.decrementScoringLevel()));
   }
 
   /**

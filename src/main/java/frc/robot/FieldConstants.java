@@ -36,10 +36,9 @@ public final class FieldConstants {
       Units.inchesToMeters(315.5) + (isWPIField ? Units.inchesToMeters(3.0) : 0.0);
   public static final double tapeWidth = Units.inchesToMeters(2.0);
 
-  /** this one is weird */
   public static final Translation2d allianceFlip(Translation2d translation) {
     if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+      if (DriverStation.getAlliance().get().equals(Alliance.Red))
         return new Translation2d(fieldLength - translation.getX(), translation.getY());
       else return translation;
     } else {
@@ -49,7 +48,7 @@ public final class FieldConstants {
 
   public static final Rotation2d allianceFlip(Rotation2d rotation) {
     if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+      if (DriverStation.getAlliance().get().equals(Alliance.Red))
         return new Rotation2d(-rotation.getCos(), rotation.getSin());
       else return rotation;
     } else {
@@ -66,11 +65,12 @@ public final class FieldConstants {
     return new Translation2d(fieldLength - translation.getX(), translation.getY());
   }
 
-  public static final class Zones {
+  public static final class FieldZones {
     // Scoring zone corners
-    public static final Translation2d wallCorner = new Translation2d(3.3, 0);
-    public static final Translation2d feederCorner = new Translation2d(0, 5.475);
+    public static final Translation2d wallCorner = new Translation2d(0, 0);
+    public static final Translation2d feederCorner = new Translation2d(3.3, 5.475);
 
+    // Substation zone corners
     public static final Translation2d outerCorner = new Translation2d(13.25, 6.1);
     public static final Translation2d innerCorner = new Translation2d(fieldLength, fieldWidth);
   }

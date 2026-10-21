@@ -1,6 +1,6 @@
 package frc.robot.subsystems.stateManager;
 
-public enum State {
+public enum Setpoint {
   /* 3 sets of 3 nodes (9 total):
    *
    * x   o   x | x   o   x | x   o   x
@@ -25,7 +25,7 @@ public enum State {
   public double pivotPos;
   public double elevatorPos;
 
-  State(double pivotPos, double elevatorPos) {
+  Setpoint(double pivotPos, double elevatorPos) {
     this.pivotPos = pivotPos;
     this.elevatorPos = elevatorPos;
   }
