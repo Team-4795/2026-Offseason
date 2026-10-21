@@ -19,8 +19,11 @@ public enum Setpoint {
   CUBE_MID(0, 0),
   CUBE_LOW(0, 0),
 
+  INTAKING(0, 0),
+
   HOLDING(0, 0),
-  STOW(0, 0);
+  STOW(0, 0),
+  DYNAMIC(0, 0);
 
   public double pivotPos;
   public double elevatorPos;

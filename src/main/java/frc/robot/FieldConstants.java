@@ -56,6 +56,10 @@ public final class FieldConstants {
     }
   }
 
+  public static final Pose2d allianceFlip(Pose2d pose) {
+    return new Pose2d(allianceFlip(pose.getTranslation()), allianceFlip(pose.getRotation()));
+  }
+
   /** this one actually works like it should */
   public static final Rotation2d forceAllianceFlip(Rotation2d rotation) {
     return new Rotation2d(-rotation.getCos(), rotation.getSin());
@@ -71,7 +75,7 @@ public final class FieldConstants {
     public static final Translation2d feederCorner = new Translation2d(3.3, 5.475);
 
     // Substation zone corners
-    public static final Translation2d outerCorner = new Translation2d(13.25, 6.1);
+    public static final Translation2d outerCorner = new Translation2d(13.25, 5.6);
     public static final Translation2d innerCorner = new Translation2d(fieldLength, fieldWidth);
   }
 
@@ -195,7 +199,7 @@ public final class FieldConstants {
     public static final double complexLowOuterYOffset =
         nodeY[0] - (Units.inchesToMeters(3.0) + (Units.inchesToMeters(25.75) / 2.0));
 
-    public static final Translation2d[] complexLowTranslations =
+    public static final Translation2d[] blueComplexLowTranslations =
         new Translation2d[] {
           new Translation2d(complexLowXCones, nodeY[0] - complexLowOuterYOffset),
           new Translation2d(complexLowXCubes, nodeY[1]),
@@ -222,11 +226,11 @@ public final class FieldConstants {
         };
 
     public static final Translation2d[] redComplexLowTranslations =
-        new Translation2d[complexLowTranslations.length];
+        new Translation2d[blueComplexLowTranslations.length];
 
     static {
-      for (int i = 0; i < complexLowTranslations.length; i++) {
-        redComplexLowTranslations[i] = forceAllianceFlip(complexLowTranslations[i]);
+      for (int i = 0; i < blueComplexLowTranslations.length; i++) {
+        redComplexLowTranslations[i] = forceAllianceFlip(blueComplexLowTranslations[i]);
       }
     }
   }
