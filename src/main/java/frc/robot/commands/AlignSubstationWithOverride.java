@@ -46,7 +46,7 @@ public class AlignSubstationWithOverride extends Command {
   public void initialize() {
     drive.resetSetpoints();
     currentPose = drive.getPose();
-    targetPose = manager.getClosestNodePose();
+    targetPose = manager.getClosestNodePoseWithUpdate();
     rotationController.reset(
         drive.getRotation().getRadians(), drive.getChassisSpeeds().omegaRadiansPerSecond);
     translationController.reset();
@@ -60,7 +60,7 @@ public class AlignSubstationWithOverride extends Command {
     translationController.setTolerance(DriveConstants.translationTolerance);
 
     currentPose = drive.getPose();
-    targetPose = manager.getSubstationPose();
+    targetPose = manager.getSubstationPoseWithUpdate();
 
     // stop moving if within tolerance
     // idk if these lines are even necessary
@@ -103,8 +103,8 @@ public class AlignSubstationWithOverride extends Command {
 
     ChassisSpeeds driverSpeeds =
         new ChassisSpeeds(
-            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * x,
-            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * y,
+            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * x * DriveConstants.xJoystickAlignMult,
+            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * y * DriveConstants.yJoystickAlignMult,
             0);
 
     // add them up and run them!

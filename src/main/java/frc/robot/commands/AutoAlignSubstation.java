@@ -40,7 +40,7 @@ public class AutoAlignSubstation extends Command {
   public void initialize() {
     drive.resetSetpoints();
     currentPose = drive.getPose();
-    targetPose = manager.getClosestNodePose();
+    targetPose = manager.getClosestNodePoseWithUpdate();
     rotationController.reset(
         drive.getRotation().getRadians(), drive.getChassisSpeeds().omegaRadiansPerSecond);
     translationController.reset();
@@ -54,7 +54,7 @@ public class AutoAlignSubstation extends Command {
     translationController.setTolerance(DriveConstants.translationTolerance);
 
     currentPose = drive.getPose();
-    targetPose = manager.getClosestNodePose();
+    targetPose = manager.getClosestNodePoseWithUpdate();
 
     // stop moving if within tolerance
     // idk if these lines are even necessary

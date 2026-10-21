@@ -59,7 +59,6 @@ public class StateManager extends SubsystemBase {
   private StateManager() {
     this.currentSetpoint = Setpoint.STOW;
     updatePoses();
-    updateZones();
   }
 
   public static StateManager getInstance() {
@@ -98,16 +97,37 @@ public class StateManager extends SubsystemBase {
   }
 
   // TODO position offset of robot when aligning
-  public Translation2d getClosestNodeTranslation() {
-    return closestNodePose.getTranslation();
-  }
-
-  public double getNodeDistance() {
-    return closestNodePose.getTranslation().getDistance(currentPose.getTranslation());
+  public Pose2d getClosestNodePoseWithUpdate() {
+    // determine pose of closest node depending on alliance
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      closestNodePose =
+          new Pose2d(
+              currentPose.getTranslation().nearest(Arrays.asList(Grids.redComplexLowTranslations)),
+              Rotation2d.kZero);
+    } else {
+      closestNodePose =
+          new Pose2d(
+              currentPose.getTranslation().nearest(Arrays.asList(Grids.blueComplexLowTranslations)),
+              Rotation2d.k180deg);
+    }
+    return closestNodePose;
   }
 
   public Pose2d getClosestNodePose() {
     return closestNodePose;
+  }
+
+  public Pose2d getSubstationPoseWithUpdate() {
+    // TODO actually determine how substation logic works/find translations
+    substationPose =
+        new Pose2d(
+            allianceFlip(
+                new Translation2d(
+                    LoadingZone.doubleSubstationX, LoadingZone.doubleSubstationCenterY)),
+            Rotation2d.k180deg);
+
+    return substationPose;
   }
 
   public Pose2d getSubstationPose() {
@@ -160,40 +180,16 @@ public class StateManager extends SubsystemBase {
   public void updatePoses() {
     currentPose = Drive.getInstance().getPose();
 
-    // determine pose of closest node depending on alliance
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get().equals(Alliance.Red)) {
-      closestNodePose =
-          new Pose2d(
-              currentPose.getTranslation().nearest(Arrays.asList(Grids.redComplexLowTranslations)),
-              Rotation2d.kZero);
-    } else {
-      closestNodePose =
-          new Pose2d(
-              currentPose.getTranslation().nearest(Arrays.asList(Grids.blueComplexLowTranslations)),
-              Rotation2d.k180deg);
-    }
-
-    // TODO actually determine how substation logic works/find translations
-    substationPose =
-        new Pose2d(
-            allianceFlip(
-                new Translation2d(
-                    LoadingZone.doubleSubstationX, LoadingZone.doubleSubstationCenterY)),
-            Rotation2d.k180deg);
-
     // update zones
     scoringWallCorner = allianceFlip(FieldZones.wallCorner);
     scoringFeederCorner = allianceFlip(FieldZones.feederCorner);
     substationInnerCorner = allianceFlip(FieldZones.innerCorner);
     substationOuterCorner = allianceFlip(FieldZones.outerCorner);
-  }
 
-  public void updateZones() {
-    Translation2d currentTranslation = currentPose.getTranslation();
-    if (isWithinZone(scoringWallCorner, scoringFeederCorner, currentTranslation)) {
+    if (isWithinZone(scoringWallCorner, scoringFeederCorner, currentPose.getTranslation())) {
       zone = Zone.GRID;
-    } else if (isWithinZone(substationOuterCorner, substationInnerCorner, currentTranslation)) {
+    } else if (isWithinZone(
+        substationOuterCorner, substationInnerCorner, currentPose.getTranslation())) {
       zone = Zone.SUBSTATION;
     } else {
       zone = Zone.NONE;
@@ -233,7 +229,6 @@ public class StateManager extends SubsystemBase {
   @Override
   public void periodic() {
     updatePoses();
-    updateZones();
     Logger.recordOutput("State Manager/Setpoint", getSetpointWithUpdate());
     Logger.recordOutput("State Manager/Scoring Mode", scoringMode);
     Logger.recordOutput("Scoring Level", scoringLevel);

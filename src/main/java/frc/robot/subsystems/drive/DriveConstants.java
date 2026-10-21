@@ -25,6 +25,9 @@ public class DriveConstants {
   public static final double rotationTolerance = 0.001;
   public static final double translationTolerance = 0.02;
 
+  public static final double xJoystickAlignMult = 0.1;
+  public static final double yJoystickAlignMult = 0.5;
+
   // these are IMPORTANT!
   public static final PathConstraints pathConstraints =
       new PathConstraints(4.8, 4.0, Units.rotationsToRadians(4), Units.rotationsToRadians(4));
