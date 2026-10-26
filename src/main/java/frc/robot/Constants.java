@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.vision.VisionConstants;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -21,6 +22,7 @@ public final class Constants {
   public static final Mode replayMode = Mode.REPLAY;
 
   public static final boolean tuningMode = true;
+  public static final boolean isVisionSim = true;
 
   public static class OIConstants {
     public static final CommandXboxController driverController = new CommandXboxController(0);
@@ -39,5 +41,10 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static class FieldConstants {
+    public static double fieldLength = VisionConstants.FIELD_LAYOUT.getFieldLength();
+    public static double fieldWidth = VisionConstants.FIELD_LAYOUT.getFieldWidth();
   }
 }

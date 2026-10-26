@@ -10,6 +10,13 @@ import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
 
+  // Placeholders
+  public static final double BORDER_MARGIN = 0.5;
+  public static final double Z_MARGIN = 0.35;
+
+  public static final double XY_SINGLE_STDEV = 0.08;
+  public static final double XY_MULTIPLE_STDEV = 0.04;
+
   public static final String[] CAM_NAMES = {"Right Cam", "Front Cam", "Left Cam"};
 
   public static final Transform3d[] CAM_POSES =
