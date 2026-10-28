@@ -28,9 +28,9 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs input) {
-    input.elevatorRIghtPositionMeters = motor.getAngularPositionRotations();
-    input.elevatorRightCurrent = motor.getCurrentDrawAmps();
-    input.ElevatorRightAppliedVolts = voltage;
+    input.elevatorRightPositionMeters = motor.getAngularPositionRotations();
+    input.elevatorRightStatorCurrent = motor.getCurrentDrawAmps();
+    input.elevatorRightAppliedVolts = voltage;
     input.elevatorRightVelocityMetersPerSecond = motor.getAngularVelocityRPM();
   }
 }

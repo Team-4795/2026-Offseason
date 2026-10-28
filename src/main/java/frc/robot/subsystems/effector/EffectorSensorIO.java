@@ -1,6 +1,14 @@
 package frc.robot.subsystems.effector;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface EffectorSensorIO {
+  @AutoLog
+  public class EffectorSensorIOInputs {
+    public double distance;
+    public boolean isDetected;
+    public boolean filteredIsDetected;
+  }
 
   /**
    * @return distance of sensor, in centimeters
@@ -13,4 +21,6 @@ public interface EffectorSensorIO {
   public default boolean hasGamepiece() {
     return false;
   }
+
+  public default void updateInputs(EffectorSensorIOInputs inputs) {}
 }

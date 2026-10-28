@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Effector extends SubsystemBase {
-  private EffectorIO io;
+  private EffectorIO effectorIo;
   private EffectorSensorIO sensorIo;
 
-  // also include EffectorSensorIO as part of it
-
-  private EffectorIOInputsAutoLogged inputs;
+  private EffectorIOInputsAutoLogged effectorInputs;
+  private EffectorSensorIOInputsAutoLogged sensorInputs;
   private static Effector instance;
 
   public static Effector getInstance() {
@@ -17,10 +16,10 @@ public class Effector extends SubsystemBase {
   }
 
   public Effector(EffectorIO io, EffectorSensorIO sensorIo) {
-    this.io = io;
+    this.effectorIo = io;
     instance = this;
     this.sensorIo = sensorIo;
-    inputs = new EffectorIOInputsAutoLogged();
+    effectorInputs = new EffectorIOInputsAutoLogged();
   }
 
   public static Effector initialize(EffectorIO effectorIo, EffectorSensorIO sensorio) {
@@ -31,18 +30,18 @@ public class Effector extends SubsystemBase {
   }
 
   public void setEffectorVoltage(double volts) {
-    io.setVoltage(volts);
+    effectorIo.setVoltage(volts);
+  }
+
+  public void setGoal(double goal) {
+    effectorIo.setGoal(goal);
   }
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(getName(), inputs);
+    effectorIo.updateInputs(effectorInputs);
+    Logger.processInputs("Effector", effectorInputs);
+    sensorIo.updateInputs(sensorInputs);
+    Logger.processInputs("Effector/Sensor", sensorInputs);
   }
-
-  public void setGoal(double goal) {
-    io.setGoal(goal);
-  }
-
-  // add setgoal
 }

@@ -84,9 +84,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        pivot =
-            Pivot.initialize(
-                new PivotIOReal()); 
+        pivot = Pivot.initialize(new PivotIOReal());
         elevator = new Elevator(new ElevatorIOTalonFX());
         effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
         stateManager = StateManager.initialize();
@@ -203,7 +201,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    
+
     // default command drives with joysticks
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
