@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
-
   // Placeholders
   public static final double BORDER_MARGIN = 0.5;
   public static final double Z_MARGIN = 0.35;
@@ -17,6 +16,8 @@ public class VisionConstants {
   public static final double XY_SINGLE_STDEV = 0.08;
   public static final double XY_MULTIPLE_STDEV = 0.04;
 
+  // we will probably run right and left off of one opi
+  // and front on its own opi
   public static final String[] CAM_NAMES = {"Right Cam", "Front Cam", "Left Cam"};
 
   public static final Transform3d[] CAM_POSES =

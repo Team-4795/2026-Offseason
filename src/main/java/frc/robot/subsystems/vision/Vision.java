@@ -11,6 +11,16 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
+  /* review comments:
+   * overall good but watch your typos >:(
+   * we should try align based on just one camera/tag while scoring
+   * implement that after vision + state manager have been merged
+   * 
+   * see: https://www.chiefdelphi.com/t/frc-5987-galaxia-2025-build-thread-open-alliance/476191/29
+   * 
+   * ps: object detection would be tuff
+   */
+
   private VisionIO[] io;
   private VisionIOInputsAutoLogged[] inputs;
 
@@ -22,7 +32,7 @@ public class Vision extends SubsystemBase {
     return instance;
   }
 
-  public static Vision initilize(VisionIO... io) {
+  public static Vision initialize(VisionIO... io) {
     if (instance == null) {
       instance = new Vision(io);
     }
@@ -72,7 +82,9 @@ public class Vision extends SubsystemBase {
             || robotPose.getZ() > VisionConstants.Z_MARGIN) continue;
 
         List<Pose3d> tagPoses = new ArrayList<>();
-        // ADD TAGS TO CONSIDER
+        // should exclude tags that are not relevant to us
+        // we don't really need the opposing alliance's grid and substation tags
+        // and based on the way we calculate stdevs we don't want to detect distant tags that are irrelevant to us
         for (int tag : inputs[i].tags) {
           VisionConstants.FIELD_LAYOUT.getTagPose(tag).ifPresent(tagPoses::add);
         }
