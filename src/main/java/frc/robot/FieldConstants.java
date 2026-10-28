@@ -11,10 +11,13 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.List;
 
 /**
@@ -32,6 +35,49 @@ public final class FieldConstants {
   public static final double fieldWidth =
       Units.inchesToMeters(315.5) + (isWPIField ? Units.inchesToMeters(3.0) : 0.0);
   public static final double tapeWidth = Units.inchesToMeters(2.0);
+
+  public static final Translation2d allianceFlip(Translation2d translation) {
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Red))
+        return new Translation2d(fieldLength - translation.getX(), translation.getY());
+      else return translation;
+    } else {
+      return translation;
+    }
+  }
+
+  public static final Rotation2d allianceFlip(Rotation2d rotation) {
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Red))
+        return new Rotation2d(-rotation.getCos(), rotation.getSin());
+      else return rotation;
+    } else {
+      return rotation;
+    }
+  }
+
+  public static final Pose2d allianceFlip(Pose2d pose) {
+    return new Pose2d(allianceFlip(pose.getTranslation()), allianceFlip(pose.getRotation()));
+  }
+
+  /** this one actually works like it should */
+  public static final Rotation2d forceAllianceFlip(Rotation2d rotation) {
+    return new Rotation2d(-rotation.getCos(), rotation.getSin());
+  }
+
+  public static final Translation2d forceAllianceFlip(Translation2d translation) {
+    return new Translation2d(fieldLength - translation.getX(), translation.getY());
+  }
+
+  public static final class FieldZones {
+    // Scoring zone corners
+    public static final Translation2d wallCorner = new Translation2d(0, 0);
+    public static final Translation2d feederCorner = new Translation2d(3.3, 5.475);
+
+    // Substation zone corners
+    public static final Translation2d outerCorner = new Translation2d(13.25, 5.6);
+    public static final Translation2d innerCorner = new Translation2d(fieldLength, fieldWidth);
+  }
 
   // Dimensions for community and charging station, including the tape.
   public static final class Community {
@@ -153,7 +199,7 @@ public final class FieldConstants {
     public static final double complexLowOuterYOffset =
         nodeY[0] - (Units.inchesToMeters(3.0) + (Units.inchesToMeters(25.75) / 2.0));
 
-    public static final Translation2d[] complexLowTranslations =
+    public static final Translation2d[] blueComplexLowTranslations =
         new Translation2d[] {
           new Translation2d(complexLowXCones, nodeY[0] - complexLowOuterYOffset),
           new Translation2d(complexLowXCubes, nodeY[1]),
@@ -178,6 +224,15 @@ public final class FieldConstants {
           new Translation3d(complexLowXCubes, nodeY[7], 0.0),
           new Translation3d(complexLowXCones, nodeY[8] + complexLowOuterYOffset, 0.0),
         };
+
+    public static final Translation2d[] redComplexLowTranslations =
+        new Translation2d[blueComplexLowTranslations.length];
+
+    static {
+      for (int i = 0; i < blueComplexLowTranslations.length; i++) {
+        redComplexLowTranslations[i] = forceAllianceFlip(blueComplexLowTranslations[i]);
+      }
+    }
   }
 
   // Dimensions for loading zone and substations, including the tape

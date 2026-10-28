@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Elevator.*;
@@ -29,6 +31,8 @@ import frc.robot.subsystems.effector.*;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.stateManager.StateManager;
+import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -42,11 +46,26 @@ public class RobotContainer {
   private final Drive drive;
   private final Pivot pivot;
   private final Effector effector;
-  // Controller
+  private final StateManager stateManager;
+
+  // Controllers
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
   private final Elevator elevator;
+
+  // Triggers
+  //   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
+  //   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
+  private final Trigger autoAlignNodeOverride = new Trigger(m_driverController.rightBumper());
+  private final Trigger autoAlignSubstationOverride = new Trigger(m_driverController.leftBumper());
+
+  private final Trigger cubeMode = new Trigger(m_driverController.povLeft());
+  private final Trigger coneMode = new Trigger(m_driverController.povRight());
+  private final Trigger clearScoringMode = new Trigger(m_driverController.y());
+
+  private final Trigger incrementScoringLevel = new Trigger(m_driverController.povUp());
+  private final Trigger decrementScoringLevel = new Trigger(m_driverController.povDown());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -59,7 +78,7 @@ public class RobotContainer {
         // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
         // a CANcoder
         drive =
-            new Drive(
+            Drive.initialize(
                 new GyroIOPigeon2(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
@@ -67,9 +86,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         pivot =
             Pivot.initialize(
-                new PivotIOReal()); // the regular constructor probably would work in theory but we
-        // made the initialize method for a reason
+                new PivotIOReal()); 
+        elevator = new Elevator(new ElevatorIOTalonFX());
         effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
+        stateManager = StateManager.initialize();
+
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -87,14 +108,12 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
-
-        elevator = new Elevator(null);
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         drive =
-            new Drive(
+            Drive.initialize(
                 new GyroIO() {},
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
@@ -102,14 +121,14 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
-
         elevator = new Elevator(new ElevatorIOSim());
+        stateManager = StateManager.initialize();
         break;
       default:
         // Replayed robot, disable IO implementations
 
         drive =
-            new Drive(
+            Drive.initialize(
                 new GyroIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
@@ -118,6 +137,7 @@ public class RobotContainer {
         pivot = Pivot.initialize(new PivotIOReal());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
         elevator = new Elevator(null);
+        stateManager = StateManager.initialize();
         break;
     }
 
@@ -183,6 +203,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+    
+    // default command drives with joysticks
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -196,6 +218,33 @@ public class RobotContainer {
     elevator.setDefaultCommand(
         Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
     m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
+
+    // autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
+
+    // ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
+
+    autoAlignNodeOverride.whileTrue(
+        Commands.deferredProxy(
+            () ->
+                AutoCommands.pathfindNodeWithOverride(
+                    () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
+
+    autoAlignSubstationOverride.whileTrue(
+        Commands.deferredProxy(
+            () ->
+                AutoCommands.pathfindSubstationWithOverride(
+                    () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
+
+    coneMode.onTrue(AutoCommands.setConeMode());
+    cubeMode.onTrue(AutoCommands.setCubeMode());
+    clearScoringMode.onTrue(Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
+
+    m_driverController
+        .x()
+        .onTrue(Commands.runOnce(() -> stateManager.setSetpointTesting())); // TODO thingy
+
+    incrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.incrementScoringLevel()));
+    decrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.decrementScoringLevel()));
   }
 
   /**
