@@ -15,9 +15,9 @@ public class Vision extends SubsystemBase {
    * overall good but watch your typos >:(
    * we should try align based on just one camera/tag while scoring
    * implement that after vision + state manager have been merged
-   * 
+   *
    * see: https://www.chiefdelphi.com/t/frc-5987-galaxia-2025-build-thread-open-alliance/476191/29
-   * 
+   *
    * ps: object detection would be tuff
    */
 
@@ -84,7 +84,8 @@ public class Vision extends SubsystemBase {
         List<Pose3d> tagPoses = new ArrayList<>();
         // should exclude tags that are not relevant to us
         // we don't really need the opposing alliance's grid and substation tags
-        // and based on the way we calculate stdevs we don't want to detect distant tags that are irrelevant to us
+        // and based on the way we calculate stdevs we don't want to detect distant tags that are
+        // irrelevant to us
         for (int tag : inputs[i].tags) {
           VisionConstants.FIELD_LAYOUT.getTagPose(tag).ifPresent(tagPoses::add);
         }

@@ -28,6 +28,7 @@ import frc.robot.subsystems.effector.*;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -41,6 +42,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Pivot pivot;
   private final Effector effector;
+  private final Vision vision;
   // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
@@ -85,6 +87,8 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
+        VisionIO[] cams = {new VisionIOReal(0), new VisionIOReal(1), new VisionIOReal(2)};
+        vision = new Vision(cams);
         break;
 
       case SIM:
@@ -98,7 +102,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
-
+        VisionIO[] cams2 = {new VisionIOSim(), new VisionIOSim(), new VisionIOSim()};
+        vision = new Vision(cams2);
         break;
 
       default:
@@ -113,6 +118,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivot = Pivot.initialize(new PivotIOReal());
+        VisionIO[] cams3 = {new VisionIOSim(), new VisionIOSim(), new VisionIOSim()};
+        vision = new Vision(cams3);
         break;
     }
 

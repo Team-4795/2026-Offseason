@@ -54,7 +54,7 @@ public class VisionIOSim implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     if (Constants.isVisionSim) {
       visionSim.update(Drive.getInstance().getPose());
-      visionSim.getDebugField();
+      Logger.recordOutput("SimVisPos", visionSim.getDebugField().getRobotPose());
 
       Logger.recordOutput(
           "Vision/Camera Poses/Front Cam Pose", visionSim.getCameraPose(cameraSimOne).get());
