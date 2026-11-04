@@ -102,8 +102,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
         effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
-        VisionIO[] cams2 = {new VisionIOSim(), new VisionIOSim(), new VisionIOSim()};
-        vision = new Vision(cams2);
+        vision = Vision.initialize(new VisionIOSim());
         break;
 
       default:
@@ -118,8 +117,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivot = Pivot.initialize(new PivotIOReal());
-        VisionIO[] cams3 = {new VisionIOSim(), new VisionIOSim(), new VisionIOSim()};
-        vision = new Vision(cams3);
+        vision = Vision.initialize(new VisionIO() {});
         break;
     }
 

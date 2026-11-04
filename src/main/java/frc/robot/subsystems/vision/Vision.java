@@ -54,8 +54,8 @@ public class Vision extends SubsystemBase {
     }
   }
 
-  public boolean isVisionUpdating() {
-    return shouldUpdate[0];
+  public boolean isVisionUpdating(int i) {
+    return shouldUpdate[i];
   }
 
   @Override
@@ -64,55 +64,57 @@ public class Vision extends SubsystemBase {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/" + VisionConstants.CAM_NAMES[i], inputs[i]);
       Logger.recordOutput(
-          "Vision/" + VisionConstants.CAM_NAMES[i] + "/is updating", isVisionUpdating());
+          "Vision/" + VisionConstants.CAM_NAMES[i] + "/is updating", isVisionUpdating(i));
     }
 
-    for (int i = 0; i < io.length; i++) { // Iterate through all cams
-      for (int p = 0; p < inputs[i].pose.length; p++) { // Iterate through estimated poses
-        Pose3d robotPose = inputs[i].pose[p];
+    if (!Constants.isVisionSim) {
+      for (int i = 0; i < io.length; i++) { // Iterate through all cams
+        for (int p = 0; p < inputs[i].pose.length; p++) { // Iterate through estimated poses
+          Pose3d robotPose = inputs[i].pose[p];
 
-        // throw out bad data that's outside margins
-        if (robotPose.getX() < -VisionConstants.BORDER_MARGIN
-            || robotPose.getX()
-                > Constants.FieldConstants.fieldLength + VisionConstants.BORDER_MARGIN
-            || robotPose.getY() < -VisionConstants.BORDER_MARGIN
-            || robotPose.getY()
-                > Constants.FieldConstants.fieldWidth + VisionConstants.BORDER_MARGIN
-            || robotPose.getZ() < -VisionConstants.Z_MARGIN
-            || robotPose.getZ() > VisionConstants.Z_MARGIN) continue;
+          // throw out bad data that's outside margins
+          if (robotPose.getX() < -VisionConstants.BORDER_MARGIN
+              || robotPose.getX()
+                  > Constants.FieldConstants.fieldLength + VisionConstants.BORDER_MARGIN
+              || robotPose.getY() < -VisionConstants.BORDER_MARGIN
+              || robotPose.getY()
+                  > Constants.FieldConstants.fieldWidth + VisionConstants.BORDER_MARGIN
+              || robotPose.getZ() < -VisionConstants.Z_MARGIN
+              || robotPose.getZ() > VisionConstants.Z_MARGIN) continue;
 
-        List<Pose3d> tagPoses = new ArrayList<>();
-        // should exclude tags that are not relevant to us
-        // we don't really need the opposing alliance's grid and substation tags
-        // and based on the way we calculate stdevs we don't want to detect distant tags that are
-        // irrelevant to us
-        for (int tag : inputs[i].tags) {
-          VisionConstants.FIELD_LAYOUT.getTagPose(tag).ifPresent(tagPoses::add);
-        }
-        if (tagPoses.isEmpty()) continue;
+          List<Pose3d> tagPoses = new ArrayList<>();
+          // should exclude tags that are not relevant to us
+          // we don't really need the opposing alliance's grid and substation tags
+          // and based on the way we calculate stdevs we don't want to detect distant tags that are
+          // irrelevant to us
+          for (int tag : inputs[i].tags) {
+            VisionConstants.FIELD_LAYOUT.getTagPose(tag).ifPresent(tagPoses::add);
+          }
+          if (tagPoses.isEmpty()) continue;
 
-        // calculate average distance
-        double distance = 0.0;
-        for (var tag : tagPoses) {
-          distance += tag.getTranslation().getDistance(robotPose.getTranslation());
-        }
-        distance /= tagPoses.size();
+          // calculate average distance
+          double distance = 0.0;
+          for (var tag : tagPoses) {
+            distance += tag.getTranslation().getDistance(robotPose.getTranslation());
+          }
+          distance /= tagPoses.size();
 
-        // calculate stdevs based on distance/# of tags
-        double xyStdDev =
-            (tagPoses.size() == 1
-                    ? VisionConstants.XY_SINGLE_STDEV
-                    : VisionConstants.XY_MULTIPLE_STDEV)
-                * Math.pow(distance, 2);
-        var stddevs = VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(100));
+          // calculate stdevs based on distance/# of tags
+          double xyStdDev =
+              (tagPoses.size() == 1
+                      ? VisionConstants.XY_SINGLE_STDEV
+                      : VisionConstants.XY_MULTIPLE_STDEV)
+                  * Math.pow(distance, 2);
+          var stddevs = VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(100));
 
-        Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/Avg distance", distance);
-        Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/xy std dev", xyStdDev);
-        Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/Robot Pose", robotPose);
+          Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/Avg distance", distance);
+          Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/xy std dev", xyStdDev);
+          Logger.recordOutput("Vision/" + VisionConstants.CAM_NAMES[i] + "/Robot Pose", robotPose);
 
-        if (shouldUpdate[i]) {
-          Drive.getInstance()
-              .addVisionMeasurement(robotPose.toPose2d(), inputs[i].timestamp[p], stddevs);
+          if (shouldUpdate[i]) {
+            Drive.getInstance()
+                .addVisionMeasurement(robotPose.toPose2d(), inputs[i].timestamp[p], stddevs);
+          }
         }
       }
     }
