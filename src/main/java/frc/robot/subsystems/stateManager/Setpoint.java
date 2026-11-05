@@ -11,18 +11,18 @@ public enum Setpoint {
    */
 
   // TODO: actually find these values
-  CONE_HIGH(0, 0),
-  CONE_MID(0, 0),
-  CONE_LOW(0, 0),
+  CONE_HIGH(3.5, 3.5),
+  CONE_MID(2.5, 2.5),
+  CONE_LOW(1.5, 1.5),
 
-  CUBE_HIGH(0, 0),
-  CUBE_MID(0, 0),
-  CUBE_LOW(0, 0),
+  CUBE_HIGH(3.0, 3.0),
+  CUBE_MID(2.0, 2.0),
+  CUBE_LOW(1.0, 1.0),
 
-  INTAKING(0, 0),
+  INTAKING(2.5, 1.5),
 
-  HOLDING(0, 0),
-  STOW(0, 0),
+  HOLDING(0.25, 0.5),
+  STOW(0, 0.5),
   DYNAMIC(0, 0);
 
   public double pivotPos;
