@@ -20,6 +20,7 @@ public class Effector extends SubsystemBase {
     instance = this;
     this.sensorIo = sensorIo;
     effectorInputs = new EffectorIOInputsAutoLogged();
+    sensorInputs = new EffectorSensorIOInputsAutoLogged();
   }
 
   public static Effector initialize(EffectorIO effectorIo, EffectorSensorIO sensorio) {
