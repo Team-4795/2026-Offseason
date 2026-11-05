@@ -7,7 +7,7 @@ public class Pivot extends SubsystemBase {
   private PivotIO io;
   private static Pivot instance;
   private PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
-
+  private double goal = 0.0;
   // you don't need to worry about setpoints right now, we will make a state manager that handles
   // stuff like this
   public enum Setpoints {
@@ -39,7 +39,12 @@ public class Pivot extends SubsystemBase {
     io.setGoal(goalRots);
   }
 
-  public void atGoal() {}
+  public boolean atGoal() {
+    if (inputs.goal - goal < 0.3) {
+      return true;
+    }
+    return false;
+  }
 
   @Override
   public void periodic() {

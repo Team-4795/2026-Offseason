@@ -8,6 +8,7 @@ public class Elevator extends SubsystemBase {
   private static ElevatorIO elevatorIO;
   private static ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
   private static Elevator instance;
+  private double goal = 0.0;
 
   public Elevator(ElevatorIO io) {
     elevatorIO = io;
@@ -15,6 +16,14 @@ public class Elevator extends SubsystemBase {
 
   public void setGoal(double rightX) {
     elevatorIO.setGoal(rightX);
+    goal = rightX;
+  }
+
+  public boolean atGoal() {
+    if (Math.abs(inputs.elevatorRightPositionMeters - goal) < 0.2) {
+      return true;
+    }
+    return false;
   }
 
   @Override
