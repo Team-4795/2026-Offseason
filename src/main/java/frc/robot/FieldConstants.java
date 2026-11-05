@@ -75,8 +75,8 @@ public final class FieldConstants {
     public static final Translation2d feederCorner = new Translation2d(3.3, 5.475);
 
     // Substation zone corners
-    public static final Translation2d outerCorner = new Translation2d(13.25, 5.6);
-    public static final Translation2d innerCorner = new Translation2d(fieldLength, fieldWidth);
+    public static final Translation2d outerCorner = new Translation2d(fieldLength - 13.25, 5.6);
+    public static final Translation2d innerCorner = new Translation2d(0, fieldWidth);
   }
 
   // Dimensions for community and charging station, including the tape.

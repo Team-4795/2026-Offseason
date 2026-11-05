@@ -54,7 +54,7 @@ public class StateManager extends SubsystemBase {
   private Setpoint currentSetpoint = Setpoint.STOW;
   private int scoringLevel = 0; // 0 - 2 inclusive, corresponding to setpoint array elements
 
-  private Translation2d testingSubstationAlignPos = new Translation2d(fieldLength - 1.45, 6.75);
+  private Translation2d testingSubstationAlignPos = new Translation2d(1.45, 6.75);
 
   private StateManager() {
     this.currentSetpoint = Setpoint.STOW;
@@ -121,11 +121,11 @@ public class StateManager extends SubsystemBase {
   public Pose2d getSubstationPoseWithUpdate() {
     // TODO actually determine how substation logic works/find translations
     substationPose =
-        new Pose2d(
-            allianceFlip(
+        allianceFlip(new Pose2d(
                 new Translation2d(
-                    LoadingZone.doubleSubstationX, LoadingZone.doubleSubstationCenterY)),
-            Rotation2d.k180deg);
+                    fieldLength - LoadingZone.doubleSubstationX,
+                    LoadingZone.doubleSubstationCenterY),
+            Rotation2d.k180deg));
 
     return substationPose;
   }
@@ -140,14 +140,14 @@ public class StateManager extends SubsystemBase {
         allianceFlip(
             new Pose2d(
                 (new Translation2d(
-                    1.2, MathUtil.clamp(currentPose.getTranslation().getY(), 0.5, 4.8))),
+                    1.2, MathUtil.clamp(currentPose.getTranslation().getY(), 0.5, 4.8))), // TODO tune these
                 Rotation2d.k180deg));
     return pathfindingNodeTargetPose;
   }
 
   public Pose2d getSubstationPathfindingTargetPose() {
     pathfindingSubstationTargetPose =
-        allianceFlip(new Pose2d(testingSubstationAlignPos, Rotation2d.kZero));
+        allianceFlip(new Pose2d(testingSubstationAlignPos, Rotation2d.k180deg));
     return pathfindingSubstationTargetPose;
   }
 
