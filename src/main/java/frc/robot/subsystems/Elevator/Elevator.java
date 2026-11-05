@@ -7,6 +7,7 @@ public class Elevator extends SubsystemBase {
   // IMPLEMENT IOINPUTS
   private static ElevatorIO elevatorIO;
   private static ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private static Elevator instance;
 
   public Elevator(ElevatorIO io) {
     elevatorIO = io;
@@ -20,5 +21,9 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     elevatorIO.updateInputs(inputs);
     Logger.processInputs("elevator", inputs);
+  }
+
+  public static Elevator getInstance() {
+    return instance;
   }
 }

@@ -32,4 +32,12 @@ public enum Setpoint {
     this.pivotPos = pivotPos;
     this.elevatorPos = elevatorPos;
   }
+
+  public double getPivotPos() {
+    return (pivotPos);
+  }
+
+  public double getElevatorPos() {
+    return (elevatorPos);
+  }
 }

@@ -39,6 +39,8 @@ public class Pivot extends SubsystemBase {
     io.setGoal(goalRots);
   }
 
+  public void atGoal() {}
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
