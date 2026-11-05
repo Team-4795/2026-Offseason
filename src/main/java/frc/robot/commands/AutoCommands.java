@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.effector.Effector;
 import frc.robot.subsystems.pivot.Pivot;
@@ -14,6 +15,7 @@ public class AutoCommands {
   private static Drive drive = Drive.getInstance();
   private static Effector effector = Effector.getInstance();
   private static Pivot pivot = Pivot.getInstance();
+  private static Elevator elevator = Elevator.getInstance();
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command intake() {
@@ -58,5 +60,14 @@ public class AutoCommands {
 
   public static Command setConeMode() {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CONE));
+  }
+
+  public static Command scoringSequence() {
+    return Commands.sequence(
+        Commands.parallel(
+            Commands.run(() -> pivot.setGoal(stateManager.getSetpointWithUpdate().getPivotPos())),
+            Commands.run(
+                () -> elevator.setGoal(stateManager.getSetpointWithUpdate().getElevatorPos()))),
+        Commands.waitUntil(() -> (pivot.atGoal() && elevator.atGoal())));
   }
 }
