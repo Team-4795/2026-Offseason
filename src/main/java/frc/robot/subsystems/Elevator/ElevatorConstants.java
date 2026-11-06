@@ -30,8 +30,9 @@ public class ElevatorConstants {
 
   public static final double MAX_V = 0;
   public static final double MAX_A = 0;
-  public static final double MIN_HEIGHT = 0;
-  public static final double MAX_HEIGHT = 0;
+  public static final double MIN_HEIGHT = 0.1;
+  public static final double MAX_HEIGHT = 5.0;
 
-  public static final double GEARING = 1.0;
+  public static final double GEARING = 0.0;
+  public static final double SIM_GEARING = 1.0;
 }

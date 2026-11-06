@@ -1,5 +1,6 @@
 package frc.robot.subsystems.pivot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -8,15 +9,8 @@ public class Pivot extends SubsystemBase {
   private static Pivot instance;
   private PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
   private double goal = 0.0;
-  // you don't need to worry about setpoints right now, we will make a state manager that handles
-  // stuff like this
-  public enum Setpoints {
-    S1,
-    S2,
-    S3,
-  }
 
-  private Pivot(PivotIO io) { // private because we really shouldn't be using it
+  private Pivot(PivotIO io) {
     this.io = io;
     instance = this;
     io.updateInputs(inputs);
@@ -36,11 +30,11 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setGoal(double goalRots) {
-    io.setGoal(goalRots);
+    io.setGoal(MathUtil.clamp(goalRots, PivotConstants.MIN_ANGLE, PivotConstants.MAX_ANGLE));
   }
 
   public boolean atGoal() {
-    if (inputs.goal - goal < 0.3) {
+    if (Math.abs(inputs.position - goal) < 0.3) {
       return true;
     }
     return false;

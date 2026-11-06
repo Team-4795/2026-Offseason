@@ -29,6 +29,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.effector.*;
 import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.stateManager.StateManager;
@@ -47,12 +48,12 @@ public class RobotContainer {
   private final Pivot pivot;
   private final Effector effector;
   private final StateManager stateManager;
+  private final Elevator elevator;
 
   // Controllers
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
-  private final Elevator elevator;
 
   // Triggers
   //   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
@@ -85,8 +86,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOReal());
-        elevator = new Elevator(new ElevatorIOTalonFX());
-        effector = new Effector(new EffectorIOReal(), new EffectorSensorIOReal() {});
+        elevator = Elevator.initialize(new ElevatorIOTalonFX());
+        effector = Effector.initialize(new EffectorIOReal(), new EffectorSensorIOReal() {});
         stateManager = StateManager.initialize();
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
@@ -118,13 +119,12 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
-        effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
-        elevator = new Elevator(new ElevatorIOSim());
+        effector = Effector.initialize(new EffectorIOSim(), new EffectorSensorIO() {});
+        elevator = Elevator.initialize(new ElevatorIOSim());
         stateManager = StateManager.initialize();
         break;
       default:
         // Replayed robot, disable IO implementations
-
         drive =
             Drive.initialize(
                 new GyroIO() {},
@@ -132,9 +132,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        pivot = Pivot.initialize(new PivotIOReal());
-        effector = new Effector(new EffectorIOSim(), new EffectorSensorIO() {});
-        elevator = new Elevator(null);
+        pivot = Pivot.initialize(new PivotIO() {});
+        effector = Effector.initialize(new EffectorIO() {}, new EffectorSensorIO() {});
+        elevator = Elevator.initialize(new ElevatorIO() {});
         stateManager = StateManager.initialize();
         break;
     }
@@ -202,24 +202,18 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // default command drives with joysticks
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -m_driverController.getLeftY(),
-            () -> -m_driverController.getLeftX(),
-            () -> -m_driverController.getRightX()));
     m_driverController
         .y()
         .whileTrue(Commands.run(() -> effector.setEffectorVoltage(8.0), effector));
 
-    elevator.setDefaultCommand(
-        Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
-    m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
+    // elevator.setDefaultCommand(
+    //     Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
+    // m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
 
-    // autoAlignTest.whileTrue(AutoCommands.autoAlignTest());
-
-    // ppPathfindTest.whileTrue(Commands.deferredProxy(() -> AutoCommands.ppPathfindToPose()));
+    m_driverController
+        .a()
+        .onTrue(
+            Commands.parallel(AutoCommands.elevatorToSetpoint(), AutoCommands.pivotToSetpoint()));
 
     autoAlignNodeOverride.whileTrue(
         Commands.deferredProxy(
@@ -235,6 +229,7 @@ public class RobotContainer {
 
     coneMode.onTrue(AutoCommands.setConeMode());
     cubeMode.onTrue(AutoCommands.setCubeMode());
+
     clearScoringMode.onTrue(Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
 
     m_driverController

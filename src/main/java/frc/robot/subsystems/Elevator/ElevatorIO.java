@@ -10,20 +10,24 @@ public interface ElevatorIO {
     public double setpointPos = 0.0;
     public double setpointVel = 0.0;
 
-    public double elevatorRightAppliedVolts = 0.0;
-    public double elevatorRightPositionMeters = 0.0;
-    public double elevatorRightVelocityMetersPerSecond = 0.0;
-    public double elevatorRightStatorCurrent = 0.0;
-    public double elevatorRightSupplyCurrent = 0.0;
+    public double rightAppliedVolts = 0.0;
+    public double rightPositionMeters = 0.0;
+    public double rightVelocityMetersPerSecond = 0.0;
+    public double rightStatorCurrent = 0.0;
+    public double rightSupplyCurrent = 0.0;
 
-    public double elevatorLeftAppliedVolts = 0.0;
-    public double elevatorLeftPositionMeters = 0.0;
-    public double elevatorLeftVelocityMetersPerSecond = 0.0;
-    public double elevatorLeftStatorCurrent = 0.0;
-    public double elevatorLeftSupplyCurrent = 0.0;
+    public double leftAppliedVolts = 0.0;
+    public double leftPositionMeters = 0.0;
+    public double leftVelocityMetersPerSecond = 0.0;
+    public double leftStatorCurrent = 0.0;
+    public double leftSupplyCurrent = 0.0;
   }
 
   public default void updateInputs(ElevatorIOInputs input) {}
 
   public default void setGoal(double goal) {}
+
+  public default double getGoal() {
+    return 0.0;
+  }
 }

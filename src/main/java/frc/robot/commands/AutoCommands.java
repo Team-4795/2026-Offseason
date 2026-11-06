@@ -19,27 +19,46 @@ public class AutoCommands {
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command intake() {
-    return Commands.run(() -> effector.setEffectorVoltage(12), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(6), effector);
   }
 
   public static Command reverseIntake() {
-    return Commands.run(() -> effector.setEffectorVoltage(-12), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(-6), effector);
   }
 
-  public static Command setPivotAngle(double angle) {
-    return Commands.run(() -> pivot.setGoal(angle), pivot);
+  public static Command setPivotAngle(double angleRots) {
+    return Commands.runOnce(() -> pivot.setGoal(angleRots), pivot);
   }
 
-  public static Command autoAlignTest() {
-    return new AutoAlignNode(drive);
+  public static Command setElevatorPos(double goal) {
+    return Commands.runOnce(() -> elevator.setGoal(goal), elevator);
   }
 
-  public static Command ppPathfindToPose() {
-    return DriveCommands.pathfindToPose(stateManager.getNodePathfindingTargetPose())
-        .until(() -> stateManager.getZone() == Zone.GRID)
-        .andThen(autoAlignTest());
+  /** Set pivot goal to state manager setpoint */
+  public static Command pivotToSetpoint() {
+    return Commands.runOnce(() -> pivot.setGoal(stateManager.getSetpoint().pivotPos), pivot);
   }
 
+  /** Set elevator goal to state manager setpoint */
+  public static Command elevatorToSetpoint() {
+    return Commands.runOnce(
+        () -> elevator.setGoal(stateManager.getSetpoint().elevatorPos), elevator);
+  }
+
+  // public static Command ppPathfindToPose() {
+  //   return DriveCommands.pathfindToPose(stateManager.getNodePathfindingTargetPose())
+  //       .until(() -> stateManager.getZone() == Zone.GRID)
+  //       .andThen(autoAlignTest());
+  // }
+
+  // public static Command autoAlignTest() {
+  //   return new AutoAlignNode(drive);
+  // }
+
+  /**
+   * Use Pathplanner to pathfind roughly to closest node, then auto align (with driver joystick
+   * override)
+   */
   public static Command pathfindNodeWithOverride(
       DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return DriveCommands.pathfindToPose(stateManager.getNodePathfindingTargetPose())
@@ -47,6 +66,10 @@ public class AutoCommands {
         .andThen(new AlignNodeWithOverride(drive, xSupplier, ySupplier));
   }
 
+  /**
+   * Use Pathplanner to pathfind roughly to substation, then auto align (with driver joystick
+   * override)
+   */
   public static Command pathfindSubstationWithOverride(
       DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return DriveCommands.pathfindToPose(stateManager.getSubstationPathfindingTargetPose())
@@ -54,20 +77,19 @@ public class AutoCommands {
         .andThen(new AlignSubstationWithOverride(drive, xSupplier, ySupplier));
   }
 
+  /** Toggle cube mode for scoring (see {@link #setConeMode()}) */
   public static Command setCubeMode() {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CUBE));
   }
 
+  /** Toggle cone mode for scoring (see {@link #setCubeMode()}) */
   public static Command setConeMode() {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CONE));
   }
 
   public static Command scoringSequence() {
     return Commands.sequence(
-        Commands.parallel(
-            Commands.run(() -> pivot.setGoal(stateManager.getSetpointWithUpdate().getPivotPos())),
-            Commands.run(
-                () -> elevator.setGoal(stateManager.getSetpointWithUpdate().getElevatorPos()))),
+        Commands.parallel(pivotToSetpoint(), elevatorToSetpoint()),
         Commands.waitUntil(() -> (pivot.atGoal() && elevator.atGoal())));
   }
 }

@@ -26,7 +26,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.Audio.BeepOnBoot = true;
     config.Audio.BeepOnConfig = true;
 
-    config.Feedback.SensorToMechanismRatio = ElevatorConstants.GEARING;
+    config.Feedback.SensorToMechanismRatio = ElevatorConstants.SIM_GEARING;
 
     config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CURRENT_LIMIT;
@@ -67,9 +67,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs input) {
     input.goal = goal;
 
-    input.elevatorRightPositionMeters = rightMotor.getPosition().getValueAsDouble();
-    input.elevatorRightStatorCurrent = rightMotor.getSupplyCurrent().getValueAsDouble();
-    input.elevatorRightAppliedVolts = rightMotor.getSupplyVoltage().getValueAsDouble();
-    input.elevatorRightVelocityMetersPerSecond = rightMotor.getVelocity().getValueAsDouble();
+    input.rightPositionMeters = rightMotor.getPosition().getValueAsDouble();
+    input.rightStatorCurrent = rightMotor.getSupplyCurrent().getValueAsDouble();
+    input.rightAppliedVolts = rightMotor.getSupplyVoltage().getValueAsDouble();
+    input.rightVelocityMetersPerSecond = rightMotor.getVelocity().getValueAsDouble();
   }
 }

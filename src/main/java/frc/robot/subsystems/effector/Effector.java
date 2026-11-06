@@ -15,7 +15,7 @@ public class Effector extends SubsystemBase {
     return instance;
   }
 
-  public Effector(EffectorIO io, EffectorSensorIO sensorIo) {
+  private Effector(EffectorIO io, EffectorSensorIO sensorIo) {
     this.effectorIo = io;
     instance = this;
     this.sensorIo = sensorIo;

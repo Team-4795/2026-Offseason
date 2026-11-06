@@ -121,11 +121,12 @@ public class StateManager extends SubsystemBase {
   public Pose2d getSubstationPoseWithUpdate() {
     // TODO actually determine how substation logic works/find translations
     substationPose =
-        allianceFlip(new Pose2d(
+        allianceFlip(
+            new Pose2d(
                 new Translation2d(
                     fieldLength - LoadingZone.doubleSubstationX,
                     LoadingZone.doubleSubstationCenterY),
-            Rotation2d.k180deg));
+                Rotation2d.k180deg));
 
     return substationPose;
   }
@@ -140,7 +141,9 @@ public class StateManager extends SubsystemBase {
         allianceFlip(
             new Pose2d(
                 (new Translation2d(
-                    1.2, MathUtil.clamp(currentPose.getTranslation().getY(), 0.5, 4.8))), // TODO tune these
+                    1.2,
+                    MathUtil.clamp(
+                        currentPose.getTranslation().getY(), 0.5, 4.8))), // TODO tune these
                 Rotation2d.k180deg));
     return pathfindingNodeTargetPose;
   }

@@ -39,7 +39,7 @@ public class PivotIOSim implements PivotIO {
 
   private double pidVolts;
   private double ffVolts;
-  private double goalRads;
+  private double goal;
 
   public PivotIOSim() {}
 
@@ -50,9 +50,8 @@ public class PivotIOSim implements PivotIO {
 
   @Override
   public void setGoal(double goalRots) {
-    goalRads =
-        Units.rotationsToRadians(
-            MathUtil.clamp(goalRots, PivotConstants.MIN_ANGLE, PivotConstants.MAX_ANGLE));
+    this.goal = goalRots;
+    double goalRads = Units.rotationsToRadians(goalRots);
     if (goalState.position != goalRads) {
       goalState = new TrapezoidProfile.State(goalRads, 0.0);
       setpointState =
@@ -82,7 +81,7 @@ public class PivotIOSim implements PivotIO {
 
     inputs.velocity = getVelocity(); // so that it's all rps
     inputs.current = motor.getCurrentDrawAmps();
-    inputs.goal = Units.radiansToRotations(goalState.position);
+    inputs.goal = this.goal;
     inputs.position = getPosition();
     inputs.voltage = motor.getInputVoltage();
     inputs.setpointPos = Units.radiansToRotations(setpointState.position);
