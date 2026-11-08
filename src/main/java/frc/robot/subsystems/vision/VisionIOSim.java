@@ -52,14 +52,14 @@ public class VisionIOSim implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-      visionSim.update(Drive.getInstance().getPose());
-      // Logger.recordOutput("SimVisPos", visionSim.getDebugField().getRobotPose());
+    visionSim.update(Drive.getInstance().getPose());
+    // Logger.recordOutput("SimVisPos", visionSim.getDebugField().getRobotPose());
 
-      Logger.recordOutput(
-          "Vision/Camera Poses/Front Cam Pose", visionSim.getCameraPose(cameraSimOne).get());
-      Logger.recordOutput(
-          "Vision/Camera Poses/Left Cam Pose", visionSim.getCameraPose(cameraSimTwo).get());
-      Logger.recordOutput(
-          "Vision/Camera Poses/Right Cam Pose", visionSim.getCameraPose(cameraSimThree).get());
-    }
+    Logger.recordOutput(
+        "Vision/Camera Poses/Front Cam Pose", visionSim.getCameraPose(cameraSimOne).get());
+    Logger.recordOutput(
+        "Vision/Camera Poses/Left Cam Pose", visionSim.getCameraPose(cameraSimTwo).get());
+    Logger.recordOutput(
+        "Vision/Camera Poses/Right Cam Pose", visionSim.getCameraPose(cameraSimThree).get());
+  }
 }

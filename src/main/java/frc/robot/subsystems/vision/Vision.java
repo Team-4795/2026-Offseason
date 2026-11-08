@@ -58,6 +58,18 @@ public class Vision extends SubsystemBase {
     return shouldUpdate[i];
   }
 
+  public void enableLocalMode() {
+    VisionConstants.localMode = true;
+  }
+
+  public void disableLocalMode() {
+    VisionConstants.localMode = false;
+  }
+
+  public boolean isLocalMode() {
+    return VisionConstants.localMode;
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {

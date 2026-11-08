@@ -25,12 +25,15 @@ public class VisionIOReal implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     Optional<EstimatedRobotPose> visionEst = Optional.empty();
     for (var result : camera.getAllUnreadResults()) {
-      visionEst = estimator.estimateCoprocMultiTagPose(result); // Multitag estimation
+      visionEst = estimator.estimateCoprocMultiTagPose(result); // Multitag estimation for global pose
       inputs.latency = result.metadata.getLatencyMillis();
 
-      if (visionEst.isEmpty()) {
-        visionEst =
-            estimator.estimateLowestAmbiguityPose(result); // Singletag if only one tag is in view
+      // Singletag if only one tag is in view
+      // or if were scoring/intaking
+      // (i mean all of our cameras are on the front so its effectively singletag anyway)
+      // TODO better fine pose estimation? like whatever 6328 was cooking up
+      if (visionEst.isEmpty() || VisionConstants.localMode) {
+        visionEst = estimator.estimateLowestAmbiguityPose(result);
       }
 
       // Update logs if we're getting vision data
