@@ -17,8 +17,8 @@ public class Effector extends SubsystemBase {
 
   private Effector(EffectorIO io, EffectorSensorIO sensorIo) {
     this.effectorIo = io;
-    instance = this;
     this.sensorIo = sensorIo;
+    instance = this;
     effectorInputs = new EffectorIOInputsAutoLogged();
     sensorInputs = new EffectorSensorIOInputsAutoLogged();
   }
@@ -36,6 +36,19 @@ public class Effector extends SubsystemBase {
 
   public void setGoal(double goal) {
     effectorIo.setGoal(goal);
+  }
+
+  public boolean hasGamepiece() {
+    return sensorIo.getHasGamepiece();
+  }
+
+  public double getDistance() {
+    return sensorIo.getDistance();
+  }
+
+  /** only used when simulating effector */
+  public void debugToggleHasGamepiece() {
+    sensorIo.toggleHasGamepiece();
   }
 
   @Override

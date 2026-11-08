@@ -17,10 +17,11 @@ public interface EffectorSensorIO {
     return 6700.0;
   }
 
-  // make it something like "return true if something is detected within x cm"
-  public default boolean hasGamepiece() {
+  public default boolean getHasGamepiece() {
     return false;
   }
+
+  public default void toggleHasGamepiece() {}
 
   public default void updateInputs(EffectorSensorIOInputs inputs) {}
 }
