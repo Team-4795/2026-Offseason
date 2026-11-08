@@ -18,12 +18,20 @@ public class AutoCommands {
   private static Elevator elevator = Elevator.getInstance();
   private static StateManager stateManager = StateManager.getInstance();
 
-  public static Command intake() {
+  public static Command runEffector() {
     return Commands.run(() -> effector.setEffectorVoltage(6), effector);
   }
 
-  public static Command reverseIntake() {
+  public static Command reverseEffector() {
     return Commands.run(() -> effector.setEffectorVoltage(-6), effector);
+  }
+
+  public static Command intake() {
+    return runEffector().onlyWhile(() -> !effector.hasGamepiece());
+  }
+
+  public static Command outtake() {
+    return reverseEffector().onlyWhile(() -> effector.hasGamepiece());
   }
 
   public static Command setPivotAngle(double angleRots) {

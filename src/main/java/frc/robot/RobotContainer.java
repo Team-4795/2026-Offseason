@@ -119,7 +119,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
-        effector = Effector.initialize(new EffectorIOSim(), new EffectorSensorIO() {});
+        effector = Effector.initialize(new EffectorIOSim(), new EffectorSensorIOSim());
         elevator = Elevator.initialize(new ElevatorIOSim());
         stateManager = StateManager.initialize();
         break;
@@ -202,18 +202,21 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    m_driverController
-        .y()
-        .whileTrue(Commands.run(() -> effector.setEffectorVoltage(8.0), effector));
+    m_driverController.rightTrigger().whileTrue(AutoCommands.intake());
+
+    m_driverController.leftTrigger().whileTrue(AutoCommands.outtake());
 
     // elevator.setDefaultCommand(
     //     Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
     // m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
 
-    m_driverController
-        .a()
-        .onTrue(
-            Commands.parallel(AutoCommands.elevatorToSetpoint(), AutoCommands.pivotToSetpoint()));
+    m_driverController.a().onTrue(Commands.runOnce(() -> effector.debugToggleHasGamepiece()));
+
+    // m_driverController
+    //     .a()
+    //     .onTrue(
+    //         Commands.parallel(AutoCommands.elevatorToSetpoint(),
+    // AutoCommands.pivotToSetpoint()));
 
     autoAlignNodeOverride.whileTrue(
         Commands.deferredProxy(
