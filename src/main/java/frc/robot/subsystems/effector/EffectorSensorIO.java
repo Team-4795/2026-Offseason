@@ -14,7 +14,7 @@ public interface EffectorSensorIO {
    * @return distance of sensor, in centimeters
    */
   public default double getDistance() {
-    return 6700.0;
+    return 0.0;
   }
 
   public default boolean getHasGamepiece() {
