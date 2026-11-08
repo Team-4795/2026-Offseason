@@ -25,7 +25,8 @@ public class VisionIOReal implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     Optional<EstimatedRobotPose> visionEst = Optional.empty();
     for (var result : camera.getAllUnreadResults()) {
-      visionEst = estimator.estimateCoprocMultiTagPose(result); // Multitag estimation for global pose
+      visionEst =
+          estimator.estimateCoprocMultiTagPose(result); // Multitag estimation for global pose
       inputs.latency = result.metadata.getLatencyMillis();
 
       // Singletag if only one tag is in view
