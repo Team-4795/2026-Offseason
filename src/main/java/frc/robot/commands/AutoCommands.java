@@ -31,7 +31,9 @@ public class AutoCommands {
   }
 
   public static Command outtake() {
-    return reverseEffector().onlyWhile(() -> effector.hasGamepiece());
+    return Commands.sequence(
+        reverseEffector().onlyWhile(() -> effector.hasGamepiece()),
+        Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
   }
 
   public static Command setPivotAngle(double angleRots) {
