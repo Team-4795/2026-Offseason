@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants.FieldZones;
 import frc.robot.FieldConstants.Grids;
 import frc.robot.FieldConstants.LoadingZone;
+import frc.robot.Leds.Leds;
 import frc.robot.subsystems.drive.Drive;
 import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
@@ -71,29 +72,44 @@ public class StateManager extends SubsystemBase {
     }
     return instance;
   }
-
+  private void scoringLevelUpdated()
+  {
+    if (ScoringMode.CONE == scoringMode){
+          Leds.getInstance().setOneColor(0,255,255,scoringLevel);
+    }
+    else if (ScoringMode.CUBE == scoringMode)
+    {
+          Leds.getInstance().setOneColor(0,0,255,scoringLevel);
+    }
+  }
   public void setScoringLevel(int level) {
     scoringLevel = level;
+    scoringLevelUpdated();
   }
 
   public void incrementScoringLevel() {
     if (scoringLevel < coneSetpoints.length - 1) scoringLevel++;
+    scoringLevelUpdated();
   }
 
   public void decrementScoringLevel() {
     if (scoringLevel > 0) scoringLevel--;
+    scoringLevelUpdated();
   }
 
   public void setCurrentSetpoint(Setpoint s) {
     if (currentSetpoint != s) currentSetpoint = s;
+    scoringLevelUpdated();
   }
 
   public void setSetpointTesting() {
     setCurrentSetpoint(Setpoint.CONE_MID);
+    scoringLevelUpdated();
   }
 
   public void setScoringMode(ScoringMode m) {
     if (scoringMode != m) scoringMode = m;
+    scoringLevelUpdated();
   }
 
   // TODO position offset of robot when aligning
