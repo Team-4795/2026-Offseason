@@ -100,6 +100,7 @@ public class AutoCommands {
   public static Command scoringSequence() {
     return Commands.sequence(
         Commands.parallel(pivotToSetpoint(), elevatorToSetpoint()),
-        Commands.waitUntil(() -> (pivot.atGoal() && elevator.atGoal())));
+        Commands.waitUntil(() -> (pivot.atGoal() && elevator.atGoal())),
+        outtake());
   }
 }
