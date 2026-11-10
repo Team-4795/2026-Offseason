@@ -19,11 +19,11 @@ public class AutoCommands {
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command runEffector() {
-    return Commands.run(() -> effector.setEffectorVoltage(6), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(10), effector);
   }
 
   public static Command reverseEffector() {
-    return Commands.run(() -> effector.setEffectorVoltage(-6), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(-10), effector);
   }
 
   public static Command intake() {
