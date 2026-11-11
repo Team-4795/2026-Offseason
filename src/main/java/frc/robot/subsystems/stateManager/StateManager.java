@@ -183,12 +183,6 @@ public class StateManager extends SubsystemBase {
   public void updatePoses() {
     currentPose = Drive.getInstance().getPose();
 
-    // update zones
-    scoringWallCorner = allianceFlip(FieldZones.wallCorner);
-    scoringFeederCorner = allianceFlip(FieldZones.feederCorner);
-    substationInnerCorner = allianceFlip(FieldZones.innerCorner);
-    substationOuterCorner = allianceFlip(FieldZones.outerCorner);
-
     if (isWithinZone(scoringWallCorner, scoringFeederCorner, currentPose.getTranslation())) {
       zone = Zone.GRID;
     } else if (isWithinZone(
@@ -227,6 +221,15 @@ public class StateManager extends SubsystemBase {
 
     return (currentTranslation.getX() > lowX && currentTranslation.getX() < highX)
         && (currentTranslation.getY() > lowY && currentTranslation.getY() < highY);
+  }
+
+  /** called on enable */
+  public void updateZoneCorners() {
+    // update zones
+    scoringWallCorner = allianceFlip(FieldZones.wallCorner);
+    scoringFeederCorner = allianceFlip(FieldZones.feederCorner);
+    substationInnerCorner = allianceFlip(FieldZones.innerCorner);
+    substationOuterCorner = allianceFlip(FieldZones.outerCorner);
   }
 
   @Override
