@@ -22,6 +22,7 @@ public class EffectorIOSim implements EffectorIO {
     inputs.position = effectorMotor.getAngularPositionRotations();
     inputs.velocity = effectorMotor.getAngularVelocityRPM() / 60; // rps
     inputs.voltage = currentVoltage;
+    inputs.current = effectorMotor.getCurrentDrawAmps();
     effectorMotor.update(0.02);
   }
 }

@@ -54,7 +54,8 @@ public class StateManager extends SubsystemBase {
   private Setpoint currentSetpoint = Setpoint.STOW;
   private int scoringLevel = 0; // 0 - 2 inclusive, corresponding to setpoint array elements
 
-  private Translation2d testingSubstationAlignPos = new Translation2d(1.45, 6.75);
+  private Translation2d anishieStinky =
+      new Translation2d(1.45, 6.75); // this is actually testing pose, dont mind the name
 
   private StateManager() {
     this.currentSetpoint = Setpoint.STOW;
@@ -149,8 +150,7 @@ public class StateManager extends SubsystemBase {
   }
 
   public Pose2d getSubstationPathfindingTargetPose() {
-    pathfindingSubstationTargetPose =
-        allianceFlip(new Pose2d(testingSubstationAlignPos, Rotation2d.k180deg));
+    pathfindingSubstationTargetPose = allianceFlip(new Pose2d(anishieStinky, Rotation2d.k180deg));
     return pathfindingSubstationTargetPose;
   }
 

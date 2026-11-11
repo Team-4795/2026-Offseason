@@ -10,10 +10,10 @@ public interface EffectorIO {
 
   @AutoLog
   public class EffectorIOInputs {
-    // should also log current
     public double position = 0;
     public double voltage = 0;
     public double velocity = 0;
+    public double current = 0; // brother...
   }
 
   public default void updateInputs(EffectorIOInputs inputs) {}

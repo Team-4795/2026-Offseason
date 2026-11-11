@@ -18,6 +18,7 @@ public class EffectorIOReal implements EffectorIO {
   public EffectorIOReal() {
     config.idleMode(IdleMode.kCoast);
     config.smartCurrentLimit(EffectorConstants.CURRENT_LIMIT);
+    config.voltageCompensation(12.0);
 
     effectorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -33,5 +34,6 @@ public class EffectorIOReal implements EffectorIO {
     inputs.position = effectorEncoder.getPosition();
     inputs.voltage = currentVoltage;
     inputs.velocity = effectorEncoder.getVelocity() / 60.0; // rps
+    inputs.current = effectorMotor.getOutputCurrent(); // sonion...
   }
 }
