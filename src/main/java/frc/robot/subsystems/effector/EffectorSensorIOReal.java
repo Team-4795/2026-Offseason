@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.subsystems.effector.EffectorConstants.SensorConstants;
+import frc.robot.util.PhoenixUtil;
 
 public class EffectorSensorIOReal implements EffectorSensorIO {
   private final CANrange sensor = new CANrange(SensorConstants.SENSOR_ID);
@@ -25,6 +26,7 @@ public class EffectorSensorIOReal implements EffectorSensorIO {
     debouncer.setDebounceType(DebounceType.kBoth);
 
     BaseStatusSignal.setUpdateFrequencyForAll(50, distance, isDetected);
+    PhoenixUtil.addSignals(distance, isDetected);
 
     config.FovParams.FOVRangeX = SensorConstants.FOV_X;
     config.FovParams.FOVRangeY = SensorConstants.FOV_Y;
@@ -40,11 +42,13 @@ public class EffectorSensorIOReal implements EffectorSensorIO {
 
   @Override
   public boolean getHasGamepiece() {
-    return debouncer.calculate(isDetected.getValue());
+    return filteredIsDetected;
   }
 
   @Override
   public void updateInputs(EffectorSensorIOInputs inputs) {
+    filteredIsDetected = debouncer.calculate(isDetected.getValue());
+
     inputs.distance = distance.getValue().in(Units.Centimeters);
     inputs.isDetected = isDetected.getValue();
     inputs.filteredIsDetected = filteredIsDetected;

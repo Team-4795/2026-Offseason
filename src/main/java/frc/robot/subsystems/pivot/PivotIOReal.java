@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.PhoenixUtil;
 
 public class PivotIOReal implements PivotIO {
   /* general comments:
@@ -37,7 +38,11 @@ public class PivotIOReal implements PivotIO {
   private final StatusSignal<Double> setpointPos = motor.getClosedLoopReference();
   private final StatusSignal<Double> setpointVel = motor.getClosedLoopReferenceSlope();
 
-  public PivotIOReal() { // just make these normal constructors
+  public PivotIOReal() {
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, position, velocity, voltage, current, setpointPos, setpointVel);
+    PhoenixUtil.addSignals(position, velocity, voltage, current, setpointPos, setpointVel);
+
     // these are not that important but good to have
     configs.Audio.BeepOnBoot = true;
     configs.Audio.BeepOnConfig = true;
@@ -57,7 +62,7 @@ public class PivotIOReal implements PivotIO {
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    motor.getConfigurator().apply(configs);
+    PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(configs));
   }
 
   @Override
@@ -83,7 +88,7 @@ public class PivotIOReal implements PivotIO {
 
   @Override
   public void updateInputs(PivotIOInputs inputs) {
-    BaseStatusSignal.refreshAll(position, velocity, voltage, current, setpointPos, setpointVel);
+    // BaseStatusSignal.refreshAll(position, velocity, voltage, current, setpointPos, setpointVel);
     inputs.velocity = velocity.getValueAsDouble();
     inputs.current = current.getValueAsDouble();
     inputs.goal = goal;

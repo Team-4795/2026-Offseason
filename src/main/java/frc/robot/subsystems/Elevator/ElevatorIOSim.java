@@ -41,7 +41,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     input.rightPositionMeters = motor.getAngularPositionRotations();
     input.rightStatorCurrent = motor.getCurrentDrawAmps();
-    input.rightAppliedVolts = voltage;
+    input.rightVolts = voltage;
     input.rightVelocityMetersPerSecond = motor.getAngularVelocityRPM();
     input.setpointVel = feedback.getSetpoint().velocity;
     input.setpointPos = feedback.getSetpoint().velocity;

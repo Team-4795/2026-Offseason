@@ -1,11 +1,18 @@
 package frc.robot.subsystems.Elevator;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.PhoenixUtil;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   // private final PositionTorqueCurrentFOC m_request = new PositionTorqueCurrentFOC(0).withSlot(0);
@@ -19,8 +26,44 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX rightMotor = new TalonFX(ElevatorConstants.CAN_ID_RIGHT);
   private final TalonFX leftMotor = new TalonFX(ElevatorConstants.CAN_ID_LEFT);
 
+  private StatusSignal<Angle> rightPosition = rightMotor.getPosition();
+  private StatusSignal<AngularVelocity> rightVelocity = rightMotor.getVelocity();
+  private StatusSignal<Current> rightStatorCurrent = rightMotor.getStatorCurrent();
+  private StatusSignal<Voltage> rightVoltage = rightMotor.getMotorVoltage();
+
+  private StatusSignal<Angle> leftPosition = leftMotor.getPosition();
+  private StatusSignal<AngularVelocity> leftVelocity = leftMotor.getVelocity();
+  private StatusSignal<Current> leftStatorCurrent = leftMotor.getStatorCurrent();
+  private StatusSignal<Voltage> leftVoltage = leftMotor.getMotorVoltage();
+
+  private StatusSignal<Double> setpointPos = rightMotor.getClosedLoopReference();
+  private StatusSignal<Double> setpointVel = rightMotor.getClosedLoopReferenceSlope();
+
   public ElevatorIOTalonFX() {
-    // BaseStatusSignal.setUpdateFrequencyForAll(50, null);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        rightPosition,
+        rightVelocity,
+        rightStatorCurrent,
+        rightVoltage,
+        leftPosition,
+        leftVelocity,
+        leftStatorCurrent,
+        leftVoltage,
+        setpointPos,
+        setpointVel);
+
+    PhoenixUtil.addSignals(
+        rightPosition,
+        rightVelocity,
+        rightStatorCurrent,
+        rightVoltage,
+        leftPosition,
+        leftVelocity,
+        leftStatorCurrent,
+        leftVoltage,
+        setpointPos,
+        setpointVel);
 
     var config = new TalonFXConfiguration();
     config.Audio.BeepOnBoot = true;
@@ -48,11 +91,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     mmConfigs.MotionMagicCruiseVelocity = ElevatorConstants.MM_V;
     mmConfigs.MotionMagicAcceleration = ElevatorConstants.MM_A;
 
-    rightMotor.getConfigurator().apply(config);
-    rightMotor.getConfigurator().apply(mmConfigs);
+    PhoenixUtil.tryUntilOk(5, () -> rightMotor.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> rightMotor.getConfigurator().apply(mmConfigs));
 
-    leftMotor.getConfigurator().apply(config);
-    leftMotor.getConfigurator().apply(mmConfigs); // just in case
+    PhoenixUtil.tryUntilOk(5, () -> leftMotor.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> leftMotor.getConfigurator().apply(mmConfigs)); // just in case
     leftMotor.setControl(new Follower(ElevatorConstants.CAN_ID_RIGHT, MotorAlignmentValue.Opposed));
   }
 
@@ -65,11 +108,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   // TODO right now it only logs information about one motor, should log the other motor too
   @Override
   public void updateInputs(ElevatorIOInputs input) {
+    // BaseStatusSignal.refreshAll(rightPosition, rightVelocity, rightStatorCurrent, rightVoltage,
+    // leftPosition, leftVelocity, leftStatorCurrent, leftVoltage, setpointPos, setpointVel);
+
     input.goal = goal;
 
-    input.rightPositionMeters = rightMotor.getPosition().getValueAsDouble();
-    input.rightStatorCurrent = rightMotor.getSupplyCurrent().getValueAsDouble();
-    input.rightAppliedVolts = rightMotor.getSupplyVoltage().getValueAsDouble();
-    input.rightVelocityMetersPerSecond = rightMotor.getVelocity().getValueAsDouble();
+    input.rightPositionMeters = rightPosition.getValueAsDouble();
+    input.rightStatorCurrent = rightStatorCurrent.getValueAsDouble();
+    input.rightVolts = rightVoltage.getValueAsDouble();
+    input.rightVelocityMetersPerSecond = rightVelocity.getValueAsDouble();
   }
 }
