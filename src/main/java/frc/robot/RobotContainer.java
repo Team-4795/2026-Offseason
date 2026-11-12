@@ -34,6 +34,7 @@ import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.stateManager.StateManager;
 import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
+import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,6 +52,8 @@ public class RobotContainer {
   private final Elevator elevator;
 
   // Controllers
+  private final Vision vision;
+  // Controller
   private final CommandXboxController m_driverController = Constants.OIConstants.driverController;
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
@@ -107,6 +110,8 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
+        VisionIO[] cams = {new VisionIOReal(0), new VisionIOReal(1), new VisionIOReal(2)};
+        vision = new Vision(cams);
         break;
 
       case SIM:
@@ -122,6 +127,7 @@ public class RobotContainer {
         effector = Effector.initialize(new EffectorIOSim(), new EffectorSensorIOSim());
         elevator = Elevator.initialize(new ElevatorIOSim());
         stateManager = StateManager.initialize();
+        vision = Vision.initialize(new VisionIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -136,6 +142,7 @@ public class RobotContainer {
         effector = Effector.initialize(new EffectorIO() {}, new EffectorSensorIO() {});
         elevator = Elevator.initialize(new ElevatorIO() {});
         stateManager = StateManager.initialize();
+        vision = Vision.initialize(new VisionIO() {});
         break;
     }
 
