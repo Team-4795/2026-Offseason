@@ -39,7 +39,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     input.elevatorRIghtPositionMeters = primaryElevatorMotor.getPosition().getValueAsDouble();
     input.elevatorRightCurrent = primaryElevatorMotor.getSupplyCurrent().getValueAsDouble();
     input.ElevatorRightAppliedVolts = primaryElevatorMotor.getSupplyVoltage().getValueAsDouble();
-    input.elevatorRightVelocityMetersPerSecond =
-        primaryElevatorMotor.getVelocity().getValueAsDouble();
+    input.elevatorRightVelocityMetersPerSecond = primaryElevatorMotor.getVelocity().getValueAsDouble();
+
+    input.elevatorLeftPositionMeters = primaryElevatorMotor.getPosition().getValueAsDouble();
+    input.elevatorLeftCurrent = primaryElevatorMotor.getSupplyCurrent().getValueAsDouble();
+    input.ElevatorLeftAppliedVolts = primaryElevatorMotor.getSupplyVoltage().getValueAsDouble();
+    input.elevatorLeftVelocityMetersPerSecond = primaryElevatorMotor.getVelocity().getValueAsDouble();
   }
 }
