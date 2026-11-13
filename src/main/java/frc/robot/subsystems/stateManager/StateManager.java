@@ -143,7 +143,7 @@ public class StateManager extends SubsystemBase {
                 (new Translation2d(
                     1.2,
                     MathUtil.clamp(
-                        currentPose.getTranslation().getY(), 0.4, 5.0))), // TODO tune these
+                        currentPose.getTranslation().getY(), 0.4, 5.0))),
                 Rotation2d.k180deg));
     return pathfindingNodeTargetPose;
   }

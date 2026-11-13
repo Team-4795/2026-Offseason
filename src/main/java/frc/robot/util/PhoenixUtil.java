@@ -10,7 +10,6 @@ package frc.robot.util;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -20,7 +19,7 @@ public class PhoenixUtil {
   private static ArrayList<BaseStatusSignal> signals = new ArrayList<BaseStatusSignal>();
 
   static {
-    if (Constants.currentMode == Mode.SIM) isReal = false;
+    if (Constants.currentMode == Constants.simMode) isReal = false;
   }
 
   /** Attempts to run the command until no error is produced. */
@@ -32,8 +31,7 @@ public class PhoenixUtil {
   }
 
   /**
-   * Refresh all StatusSignals at once for optimization (based on 6328's code) TODO: test if this
-   * stuff actually works?
+   * Refresh all StatusSignals at once for optimization (based on 6328's code) 
    */
   public static void addSignals(BaseStatusSignal... signal) {
     signals.addAll(Set.of(signal));

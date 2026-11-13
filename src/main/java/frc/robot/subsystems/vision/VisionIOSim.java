@@ -1,7 +1,6 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
@@ -64,6 +63,5 @@ public class VisionIOSim implements VisionIO {
     //     "Vision/Camera Poses/Right Cam Pose", visionSim.getCameraPose(cameraSimThree).get());
 
     if (Timer.getFPGATimestamp() % 3 == 0) System.gc();
-
   }
 }
