@@ -8,6 +8,7 @@ import frc.robot.subsystems.effector.Effector;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.stateManager.StateManager;
 import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
+import frc.robot.subsystems.stateManager.StateManager.State;
 import frc.robot.subsystems.stateManager.StateManager.Zone;
 import java.util.function.DoubleSupplier;
 
@@ -27,14 +28,14 @@ public class AutoCommands {
   }
 
   public static Command intake() {
-    return runEffector().onlyWhile(() -> !effector.hasGamepiece());
+    return Commands.runOnce(() -> stateManager.setState(State.INTAKING), stateManager);
   }
 
   public static Command outtake() {
     return Commands.runEnd(
-        () -> effector.setEffectorVoltage(-6),
-        () -> stateManager.setScoringMode(ScoringMode.NONE),
-        effector);
+        () -> stateManager.setState(State.OUTTAKING),
+        () -> stateManager.setState(State.NONE),
+        stateManager);
   }
 
   public static Command setPivotAngle(double angleRots) {
@@ -96,6 +97,27 @@ public class AutoCommands {
   /** Toggle cone mode for scoring (see {@link #setCubeMode()}) */
   public static Command setConeMode() {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CONE));
+  }
+
+  public static Command effectorDefault() {
+    return Commands.run(
+        () -> {
+          switch (stateManager.getState()) {
+            case HOLDING:
+              effector.setEffectorVoltage(2);
+              break;
+            case INTAKING:
+              effector.setEffectorVoltage(10);
+              break;
+            case OUTTAKING:
+              effector.setEffectorVoltage(-6);
+              break;
+            default:
+              effector.setEffectorVoltage(0);
+              break;
+          }
+        },
+        effector);
   }
 
   public static Command scoringSequence() {

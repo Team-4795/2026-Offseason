@@ -12,6 +12,10 @@ public interface EffectorIO {
     return false;
   }
 
+  public default void debugSpikeCurrent() {}
+
+  public default void debugLowerVelocity() {}
+
   @AutoLog
   public class EffectorIOInputs {
     public double position = 0;

@@ -13,6 +13,7 @@ import frc.robot.FieldConstants.FieldZones;
 import frc.robot.FieldConstants.Grids;
 import frc.robot.FieldConstants.LoadingZone;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.effector.Effector;
 import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,7 +32,7 @@ public class StateManager extends SubsystemBase {
 
   public enum State {
     INTAKING,
-    SCORING,
+    OUTTAKING,
     HOLDING,
     NONE
   }
@@ -53,7 +54,7 @@ public class StateManager extends SubsystemBase {
   private Zone zone = Zone.NONE;
 
   // general state
-  private State state = State.NONE; // TODO all of this logic with EE
+  private State state = State.NONE;
 
   // scoring states
   private ScoringMode scoringMode = ScoringMode.NONE;
@@ -81,6 +82,20 @@ public class StateManager extends SubsystemBase {
       instance = new StateManager();
     }
     return instance;
+  }
+
+  public void setState(State state) {
+    this.state = state;
+  }
+
+  public State getState() {
+    return state;
+  }
+
+  public void updateState() {
+    if (state == State.INTAKING) {
+      if (Effector.getInstance().hasGamepiece()) state = State.HOLDING;
+    }
   }
 
   public void setScoringLevel(int level) {
@@ -245,9 +260,9 @@ public class StateManager extends SubsystemBase {
   @Override
   public void periodic() {
     updatePoses();
-    Logger.recordOutput(
-        "State Manager/Setpoint",
-        getSetpointWithUpdate()); // TODO temporary, change to getSetpoint after intake/outtake
+    updateState();
+    Logger.recordOutput("State Manager/State", state);
+    Logger.recordOutput("State Manager/Setpoint", getSetpointWithUpdate());
     // exists
     Logger.recordOutput("State Manager/Scoring Mode", scoringMode);
     Logger.recordOutput("State Manager/Scoring Level", scoringLevel);

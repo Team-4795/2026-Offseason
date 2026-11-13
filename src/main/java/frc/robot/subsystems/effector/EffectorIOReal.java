@@ -19,16 +19,11 @@ public class EffectorIOReal implements EffectorIO {
   private double velocity = 0.0;
   private double current = 0.0;
 
-  private Debouncer debouncer = new Debouncer(EffectorConstants.DEBOUNCE_TIME);
+  private Debouncer debouncer = new Debouncer(EffectorConstants.DEBOUNCE_TIME, DebounceType.kBoth);
   private boolean hasGamepiece = false;
 
   public EffectorIOReal() {
-    debouncer.setDebounceType(DebounceType.kBoth);
-
-    config.smartCurrentLimit(
-        EffectorConstants.STALL_CURRENT_LIMIT,
-        EffectorConstants.FREE_CURRENT_LIMIT,
-        (int) EffectorConstants.VELOCITY_THRESHOLD);
+    config.smartCurrentLimit(EffectorConstants.STALL_CURRENT_LIMIT);
     config.voltageCompensation(12.0);
     config.inverted(true);
 

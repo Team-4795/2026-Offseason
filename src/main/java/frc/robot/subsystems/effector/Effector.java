@@ -52,6 +52,14 @@ public class Effector extends SubsystemBase {
   //   sensorIo.toggleHasGamepiece();
   // }
 
+  public void debugSpikeCurrent() {
+    effectorIo.debugSpikeCurrent();
+  }
+
+  public void debugLowerVelocity() {
+    effectorIo.debugLowerVelocity();
+  }
+
   public void defaultCommand() {
     if (hasGamepiece()) setEffectorVoltage(3);
     else setEffectorVoltage(0); // TODO do we want to keep intake constantly running?
@@ -63,5 +71,6 @@ public class Effector extends SubsystemBase {
     Logger.processInputs("Effector", effectorInputs);
     // sensorIo.updateInputs(sensorInputs);
     // Logger.processInputs("Effector/Sensor", sensorInputs);
+    Logger.recordOutput("Effector/Velocity Sensing", EffectorConstants.VELOCITY_MODE);
   }
 }

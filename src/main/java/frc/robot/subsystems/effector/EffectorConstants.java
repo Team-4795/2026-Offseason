@@ -10,7 +10,9 @@ public class EffectorConstants {
   public static final double DEBOUNCE_TIME = 0.5;
 
   public static final double VELOCITY_THRESHOLD = 3.0;
-  public static final double CURRENT_THRESHOLD = 40;
+  public static final double CURRENT_THRESHOLD = 60;
+
+  public static final double SIM_CURRENT_THRESHOLD = 80;
 
   public static class SensorConstants {
     public static final int SENSOR_ID = 10;

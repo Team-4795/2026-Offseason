@@ -31,6 +31,7 @@ import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.stateManager.StateManager;
 import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
+import frc.robot.subsystems.stateManager.StateManager.State;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,18 +53,26 @@ public class RobotContainer {
   private final CommandXboxController m_operatorController =
       Constants.OIConstants.operatorController;
 
-  // Triggers
-  //   private final Trigger autoAlignTest = new Trigger(m_driverController.rightTrigger());
-  //   private final Trigger ppPathfindTest = new Trigger(m_driverController.leftTrigger());
+  // Driver bindings
   private final Trigger autoAlignNodeOverride = new Trigger(m_driverController.rightBumper());
   private final Trigger autoAlignSubstationOverride = new Trigger(m_driverController.leftBumper());
+  private final Trigger intake = new Trigger(m_driverController.rightTrigger());
+  private final Trigger outtake = new Trigger(m_driverController.leftTrigger());
 
-  private final Trigger cubeMode = new Trigger(m_driverController.povLeft());
-  private final Trigger coneMode = new Trigger(m_driverController.povRight());
-  private final Trigger clearScoringMode = new Trigger(m_driverController.y());
+  // Operator bindings
+  // State stuff
+  private final Trigger clearScoringMode = new Trigger(m_operatorController.y());
+  private final Trigger cubeMode = new Trigger(m_operatorController.povLeft());
+  private final Trigger coneMode = new Trigger(m_operatorController.povRight());
+  private final Trigger incrementScoringLevel = new Trigger(m_operatorController.povUp());
+  private final Trigger decrementScoringLevel = new Trigger(m_operatorController.povDown());
 
-  private final Trigger incrementScoringLevel = new Trigger(m_driverController.povUp());
-  private final Trigger decrementScoringLevel = new Trigger(m_driverController.povDown());
+  private final Trigger clearState = new Trigger(m_operatorController.a());
+
+  // Manual override stuff
+  // TODO manual elevator and pivot
+  private final Trigger intakeOverride = new Trigger(m_operatorController.rightTrigger());
+  private final Trigger outtakeOverride = new Trigger(m_operatorController.leftTrigger());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -183,7 +192,7 @@ public class RobotContainer {
             () -> -m_driverController.getLeftX(),
             () -> -m_driverController.getRightX()));
 
-    effector.setDefaultCommand(Commands.run(() -> effector.defaultCommand(), effector));
+    effector.setDefaultCommand(AutoCommands.effectorDefault());
 
     // Lock to 0° when A button is held
     m_driverController
@@ -209,21 +218,17 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    m_driverController.rightTrigger().whileTrue(AutoCommands.intake());
+    // intake.whileTrue(AutoCommands.intake());
+    // outtake.whileTrue(AutoCommands.outtake());
 
-    m_driverController.leftTrigger().whileTrue(AutoCommands.outtake());
+    m_driverController.y().onTrue(Commands.runOnce(() -> effector.debugLowerVelocity(), effector));
 
-    // elevator.setDefaultCommand(
-    //     Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
-    // m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
-
-    // m_driverController.a().onTrue(Commands.runOnce(() -> effector.debugToggleHasGamepiece()));
-
-    // m_driverController
-    //     .a()
-    //     .onTrue(
-    //         Commands.parallel(AutoCommands.elevatorToSetpoint(),
-    // AutoCommands.pivotToSetpoint()));
+    intake.onTrue(Commands.runOnce(() -> stateManager.setState(State.INTAKING), stateManager));
+    outtake.whileTrue(
+        Commands.runEnd(
+            () -> stateManager.setState(State.OUTTAKING),
+            () -> stateManager.setState(State.NONE),
+            stateManager));
 
     autoAlignNodeOverride.whileTrue(
         Commands.deferredProxy(
@@ -240,7 +245,10 @@ public class RobotContainer {
     coneMode.onTrue(AutoCommands.setConeMode());
     cubeMode.onTrue(AutoCommands.setCubeMode());
 
-    clearScoringMode.onTrue(Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
+    clearScoringMode.onTrue(
+        Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE), stateManager));
+
+    clearState.onTrue(Commands.runOnce(() -> stateManager.setState(State.NONE), stateManager));
 
     m_driverController
         .x()
@@ -248,6 +256,21 @@ public class RobotContainer {
 
     incrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.incrementScoringLevel()));
     decrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.decrementScoringLevel()));
+
+    intakeOverride.whileTrue(AutoCommands.runEffector());
+    outtakeOverride.whileTrue(AutoCommands.reverseEffector());
+
+    // elevator.setDefaultCommand(
+    //     Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
+    // m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
+
+    // m_driverController.a().onTrue(Commands.runOnce(() -> effector.debugToggleHasGamepiece()));
+
+    // m_driverController
+    //     .a()
+    //     .onTrue(
+    //         Commands.parallel(AutoCommands.elevatorToSetpoint(),
+    // AutoCommands.pivotToSetpoint()));
   }
 
   /**
