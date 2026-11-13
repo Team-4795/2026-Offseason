@@ -1,4 +1,4 @@
-package frc.robot.subsystems.effector;
+package frc.robot.subsystems.effector.sensor;
 
 import org.littletonrobotics.junction.AutoLog;
 

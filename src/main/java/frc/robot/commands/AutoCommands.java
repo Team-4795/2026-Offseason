@@ -19,11 +19,11 @@ public class AutoCommands {
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command runEffector() {
-    return Commands.run(() -> effector.setEffectorVoltage(-10), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(10), effector);
   }
 
   public static Command reverseEffector() {
-    return Commands.run(() -> effector.setEffectorVoltage(10), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(-6), effector);
   }
 
   public static Command intake() {
@@ -31,9 +31,10 @@ public class AutoCommands {
   }
 
   public static Command outtake() {
-    return Commands.sequence(
-        reverseEffector().onlyWhile(() -> effector.hasGamepiece()),
-        Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
+    return Commands.runEnd(
+        () -> effector.setEffectorVoltage(-6),
+        () -> stateManager.setScoringMode(ScoringMode.NONE),
+        effector);
   }
 
   public static Command setPivotAngle(double angleRots) {

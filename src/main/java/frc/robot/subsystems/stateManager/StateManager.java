@@ -29,6 +29,13 @@ public class StateManager extends SubsystemBase {
     NONE
   }
 
+  public enum State {
+    INTAKING,
+    SCORING,
+    HOLDING,
+    NONE
+  }
+
   private static StateManager instance;
 
   // poses
@@ -44,6 +51,9 @@ public class StateManager extends SubsystemBase {
   private Translation2d substationOuterCorner = new Translation2d();
   private Translation2d substationInnerCorner = new Translation2d();
   private Zone zone = Zone.NONE;
+
+  // general state
+  private State state = State.NONE; // TODO all of this logic with EE
 
   // scoring states
   private ScoringMode scoringMode = ScoringMode.NONE;
@@ -89,7 +99,7 @@ public class StateManager extends SubsystemBase {
     if (currentSetpoint != s) currentSetpoint = s;
   }
 
-  public void setSetpointTesting() {
+  public void debugSetSetpoint() {
     setCurrentSetpoint(Setpoint.CONE_MID);
   }
 
@@ -240,11 +250,12 @@ public class StateManager extends SubsystemBase {
         getSetpointWithUpdate()); // TODO temporary, change to getSetpoint after intake/outtake
     // exists
     Logger.recordOutput("State Manager/Scoring Mode", scoringMode);
-    Logger.recordOutput("Scoring Level", scoringLevel);
-    Logger.recordOutput("State Manager/Nearest Node", getClosestNodePose());
-    Logger.recordOutput("State Manager/Pathfinding Node Pose", pathfindingNodeTargetPose);
+    Logger.recordOutput("State Manager/Scoring Level", scoringLevel);
+    Logger.recordOutput("State Manager/Pathfinding/Nearest Node", getClosestNodePose());
     Logger.recordOutput(
-        "State Manager/Pathfinding Substation Pose", pathfindingSubstationTargetPose);
+        "State Manager/Pathfinding/Pathfinding Node Pose", pathfindingNodeTargetPose);
+    Logger.recordOutput(
+        "State Manager/Pathfinding/Pathfinding Substation Pose", pathfindingSubstationTargetPose);
     Logger.recordOutput("State Manager/Zones/Current Zone", zone);
     Logger.recordOutput("State Manager/Zones/Scoring Wall Corner", scoringWallCorner);
     Logger.recordOutput("State Manager/Zones/Scoring Feeder Corner", scoringFeederCorner);

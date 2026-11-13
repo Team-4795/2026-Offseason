@@ -1,4 +1,4 @@
-package frc.robot.subsystems.effector;
+package frc.robot.subsystems.effector.sensor;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;

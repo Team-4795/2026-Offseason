@@ -93,7 +93,7 @@ public class RobotContainer {
         // elevator = Elevator.initialize(new ElevatorIOTalonFX());
         pivot = Pivot.initialize(new PivotIOSim());
         elevator = Elevator.initialize(new ElevatorIOSim());
-        effector = Effector.initialize(new EffectorIOReal(), new EffectorSensorIOReal() {});
+        effector = Effector.initialize(new EffectorIOReal());
         stateManager = StateManager.initialize();
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
@@ -125,7 +125,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         pivot = Pivot.initialize(new PivotIOSim());
-        effector = Effector.initialize(new EffectorIOSim(), new EffectorSensorIOSim());
+        effector = Effector.initialize(new EffectorIOSim());
         elevator = Elevator.initialize(new ElevatorIOSim());
         stateManager = StateManager.initialize();
         break;
@@ -139,7 +139,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivot = Pivot.initialize(new PivotIO() {});
-        effector = Effector.initialize(new EffectorIO() {}, new EffectorSensorIO() {});
+        effector = Effector.initialize(new EffectorIO() {});
         elevator = Elevator.initialize(new ElevatorIO() {});
         stateManager = StateManager.initialize();
         break;
@@ -182,9 +182,8 @@ public class RobotContainer {
             () -> -m_driverController.getLeftY(),
             () -> -m_driverController.getLeftX(),
             () -> -m_driverController.getRightX()));
-    effector.setDefaultCommand(Commands.run(() -> effector.setEffectorVoltage(0), effector));
 
-    effector.setDefaultCommand(Commands.run(() -> effector.setEffectorVoltage(-1), effector));
+    effector.setDefaultCommand(Commands.run(() -> effector.defaultCommand(), effector));
 
     // Lock to 0° when A button is held
     m_driverController
@@ -218,7 +217,7 @@ public class RobotContainer {
     //     Commands.run(() -> elevator.setGoal(m_operatorController.getRightX()), elevator));
     // m_driverController.a().whileTrue(Commands.run(() -> elevator.setGoal(2), elevator));
 
-    m_driverController.a().onTrue(Commands.runOnce(() -> effector.debugToggleHasGamepiece()));
+    // m_driverController.a().onTrue(Commands.runOnce(() -> effector.debugToggleHasGamepiece()));
 
     // m_driverController
     //     .a()
@@ -245,7 +244,7 @@ public class RobotContainer {
 
     m_driverController
         .x()
-        .onTrue(Commands.runOnce(() -> stateManager.setSetpointTesting())); // TODO thingy
+        .onTrue(Commands.runOnce(() -> stateManager.debugSetSetpoint())); // TODO thingy
 
     incrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.incrementScoringLevel()));
     decrementScoringLevel.onTrue(Commands.runOnce(() -> stateManager.decrementScoringLevel()));
