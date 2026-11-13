@@ -105,17 +105,23 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     rightMotor.setControl(m_request.withPosition(goal));
   }
 
-  // TODO right now it only logs information about one motor, should log the other motor too
   @Override
   public void updateInputs(ElevatorIOInputs input) {
     // BaseStatusSignal.refreshAll(rightPosition, rightVelocity, rightStatorCurrent, rightVoltage,
     // leftPosition, leftVelocity, leftStatorCurrent, leftVoltage, setpointPos, setpointVel);
 
     input.goal = goal;
+    input.setpointPos = setpointPos.getValueAsDouble();
+    input.setpointVel = setpointVel.getValueAsDouble();
 
     input.rightPositionMeters = rightPosition.getValueAsDouble();
     input.rightStatorCurrent = rightStatorCurrent.getValueAsDouble();
     input.rightVolts = rightVoltage.getValueAsDouble();
     input.rightVelocityMetersPerSecond = rightVelocity.getValueAsDouble();
+
+    input.leftPositionMeters = leftPosition.getValueAsDouble();
+    input.leftStatorCurrent = leftStatorCurrent.getValueAsDouble();
+    input.leftVolts = leftVoltage.getValueAsDouble();
+    input.leftVelocityMetersPerSecond = leftVelocity.getValueAsDouble();
   }
 }
