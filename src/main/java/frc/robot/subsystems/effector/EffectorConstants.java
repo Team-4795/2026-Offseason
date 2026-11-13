@@ -4,7 +4,7 @@ public class EffectorConstants {
   public static final int CAN_ID = 11;
 
   public static final int effectorVoltage = 5;
-  public static final int CURRENT_LIMIT = 5;
+  public static final int CURRENT_LIMIT = 60;
 
   static class SensorConstants {
     public static final int SENSOR_ID = 10;

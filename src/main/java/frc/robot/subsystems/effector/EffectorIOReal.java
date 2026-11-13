@@ -5,7 +5,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class EffectorIOReal implements EffectorIO {
@@ -16,7 +15,6 @@ public class EffectorIOReal implements EffectorIO {
   private final SparkMaxConfig config = new SparkMaxConfig();
 
   public EffectorIOReal() {
-    config.idleMode(IdleMode.kCoast);
     config.smartCurrentLimit(EffectorConstants.CURRENT_LIMIT);
     config.voltageCompensation(12.0);
 

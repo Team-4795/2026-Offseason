@@ -184,6 +184,8 @@ public class RobotContainer {
             () -> -m_driverController.getRightX()));
     effector.setDefaultCommand(Commands.run(() -> effector.setEffectorVoltage(0), effector));
 
+    effector.setDefaultCommand(Commands.run(() -> effector.setEffectorVoltage(-1), effector));
+
     // Lock to 0° when A button is held
     m_driverController
         .a()

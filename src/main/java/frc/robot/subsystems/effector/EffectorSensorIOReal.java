@@ -18,7 +18,7 @@ public class EffectorSensorIOReal implements EffectorSensorIO {
   private final StatusSignal<Distance> distance = sensor.getDistance();
   private final StatusSignal<Boolean> isDetected = sensor.getIsDetected();
 
-  private final Debouncer debouncer = new Debouncer(0.5);
+  private final Debouncer debouncer = new Debouncer(2);
 
   private boolean filteredIsDetected;
 
