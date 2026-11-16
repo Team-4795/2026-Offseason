@@ -223,7 +223,11 @@ public class RobotContainer {
 
     m_driverController.y().onTrue(Commands.runOnce(() -> effector.debugLowerVelocity(), effector));
 
-    intake.onTrue(Commands.runOnce(() -> stateManager.setState(State.INTAKING), stateManager));
+    intake.onTrue(
+        Commands.sequence(
+            Commands.runOnce(() -> stateManager.setState(State.INTAKING), stateManager),
+            Commands.runOnce(() -> effector.reset(), effector)));
+
     outtake.whileTrue(
         Commands.runEnd(
             () -> stateManager.setState(State.OUTTAKING),

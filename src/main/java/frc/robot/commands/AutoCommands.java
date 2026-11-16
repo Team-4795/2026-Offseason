@@ -99,6 +99,7 @@ public class AutoCommands {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CONE));
   }
 
+  /** Effector default command, based on state */
   public static Command effectorDefault() {
     return Commands.run(
         () -> {
@@ -107,7 +108,7 @@ public class AutoCommands {
               effector.setEffectorVoltage(2);
               break;
             case INTAKING:
-              effector.setEffectorVoltage(10);
+              effector.setEffectorVoltage(9);
               break;
             case OUTTAKING:
               effector.setEffectorVoltage(-6);

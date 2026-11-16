@@ -40,6 +40,6 @@ public class PhoenixUtil {
   }
 
   public static void refreshAll() {
-    if (isReal) BaseStatusSignal.refreshAll(signals);
+    // if (isReal) BaseStatusSignal.refreshAll(signals);
   }
 }

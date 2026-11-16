@@ -19,7 +19,8 @@ public class EffectorIOReal implements EffectorIO {
   private double velocity = 0.0;
   private double current = 0.0;
 
-  private Debouncer debouncer = new Debouncer(EffectorConstants.DEBOUNCE_TIME, DebounceType.kBoth);
+  private Debouncer debouncer =
+      new Debouncer(EffectorConstants.DEBOUNCE_TIME, DebounceType.kRising);
   private boolean hasGamepiece = false;
 
   public EffectorIOReal() {
@@ -34,6 +35,11 @@ public class EffectorIOReal implements EffectorIO {
   public void setVoltage(double voltage) {
     effectorMotor.setVoltage(voltage);
     currentVoltage = voltage;
+  }
+
+  @Override
+  public void reset() {
+    debouncer.calculate(false);
   }
 
   @Override

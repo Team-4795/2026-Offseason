@@ -60,9 +60,8 @@ public class Effector extends SubsystemBase {
     effectorIo.debugLowerVelocity();
   }
 
-  public void defaultCommand() {
-    if (hasGamepiece()) setEffectorVoltage(3);
-    else setEffectorVoltage(0); // TODO do we want to keep intake constantly running?
+  public void reset() {
+    effectorIo.reset();
   }
 
   @Override

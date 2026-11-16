@@ -12,6 +12,8 @@ public interface EffectorIO {
     return false;
   }
 
+  public default void reset() {}
+
   public default void debugSpikeCurrent() {}
 
   public default void debugLowerVelocity() {}
