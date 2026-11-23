@@ -30,9 +30,7 @@ public class PhoenixUtil {
     }
   }
 
-  /**
-   * Refresh all StatusSignals at once for optimization (based on 6328's code) 
-   */
+  /** Refresh all StatusSignals at once for optimization (based on 6328's code) */
   public static void addSignals(BaseStatusSignal... signal) {
     signals.addAll(Set.of(signal));
   }
