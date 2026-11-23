@@ -127,8 +127,10 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
-        VisionIO[] cams = {new VisionIOReal(0), new VisionIOReal(1), new VisionIOReal(2)};
-        vision = new Vision(cams);
+        
+        // VisionIO[] cams = {new VisionIOReal(0), new VisionIOReal(1), new VisionIOReal(2)};
+        // vision = new Vision(cams);
+        vision = Vision.initialize(new VisionIOSim());
         break;
 
       case SIM:
