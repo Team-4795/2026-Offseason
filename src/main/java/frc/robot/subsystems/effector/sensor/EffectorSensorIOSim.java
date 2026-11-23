@@ -1,4 +1,4 @@
-package frc.robot.subsystems.effector;
+package frc.robot.subsystems.effector.sensor;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;

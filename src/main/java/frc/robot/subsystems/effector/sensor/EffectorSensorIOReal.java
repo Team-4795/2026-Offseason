@@ -1,4 +1,4 @@
-package frc.robot.subsystems.effector;
+package frc.robot.subsystems.effector.sensor;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -18,7 +18,7 @@ public class EffectorSensorIOReal implements EffectorSensorIO {
   private final StatusSignal<Distance> distance = sensor.getDistance();
   private final StatusSignal<Boolean> isDetected = sensor.getIsDetected();
 
-  private final Debouncer debouncer = new Debouncer(0.5);
+  private final Debouncer debouncer = new Debouncer(2);
 
   private boolean filteredIsDetected;
 

@@ -8,12 +8,25 @@ public interface EffectorIO {
 
   public default void setGoal(double goal) {}
 
+  public default boolean hasGamepiece() {
+    return false;
+  }
+
+  public default void reset() {}
+
+  public default void debugSpikeCurrent() {}
+
+  public default void debugLowerVelocity() {}
+
   @AutoLog
   public class EffectorIOInputs {
-    // should also log current
     public double position = 0;
     public double voltage = 0;
     public double velocity = 0;
+    public double current = 0;
+
+    public boolean hitThreshold = false;
+    public boolean hasGamepiece = false;
   }
 
   public default void updateInputs(EffectorIOInputs inputs) {}

@@ -59,7 +59,6 @@ public class AutoAlignSubstation extends Command {
     double rMult = rotationController.atSetpoint() ? 0.0 : 1.0;
 
     // calculating outputs
-
     double tError = targetPose.getTranslation().getDistance(currentPose.getTranslation());
     double rError = targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
 

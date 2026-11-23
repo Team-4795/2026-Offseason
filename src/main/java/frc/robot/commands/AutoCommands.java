@@ -8,6 +8,7 @@ import frc.robot.subsystems.effector.Effector;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.stateManager.StateManager;
 import frc.robot.subsystems.stateManager.StateManager.ScoringMode;
+import frc.robot.subsystems.stateManager.StateManager.State;
 import frc.robot.subsystems.stateManager.StateManager.Zone;
 import java.util.function.DoubleSupplier;
 
@@ -19,7 +20,7 @@ public class AutoCommands {
   private static StateManager stateManager = StateManager.getInstance();
 
   public static Command runEffector() {
-    return Commands.run(() -> effector.setEffectorVoltage(6), effector);
+    return Commands.run(() -> effector.setEffectorVoltage(10), effector);
   }
 
   public static Command reverseEffector() {
@@ -27,13 +28,14 @@ public class AutoCommands {
   }
 
   public static Command intake() {
-    return runEffector().onlyWhile(() -> !effector.hasGamepiece());
+    return Commands.runOnce(() -> stateManager.setState(State.INTAKING), stateManager);
   }
 
   public static Command outtake() {
-    return Commands.sequence(
-        reverseEffector().onlyWhile(() -> effector.hasGamepiece()),
-        Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.NONE)));
+    return Commands.runEnd(
+        () -> stateManager.setState(State.OUTTAKING),
+        () -> stateManager.setState(State.NONE),
+        stateManager);
   }
 
   public static Command setPivotAngle(double angleRots) {
@@ -95,6 +97,28 @@ public class AutoCommands {
   /** Toggle cone mode for scoring (see {@link #setCubeMode()}) */
   public static Command setConeMode() {
     return Commands.runOnce(() -> stateManager.setScoringMode(ScoringMode.CONE));
+  }
+
+  /** Effector default command, based on state */
+  public static Command effectorDefault() {
+    return Commands.run(
+        () -> {
+          switch (stateManager.getState()) {
+            case HOLDING:
+              effector.setEffectorVoltage(2);
+              break;
+            case INTAKING:
+              effector.setEffectorVoltage(9);
+              break;
+            case OUTTAKING:
+              effector.setEffectorVoltage(-6);
+              break;
+            default:
+              effector.setEffectorVoltage(0);
+              break;
+          }
+        },
+        effector);
   }
 
   public static Command scoringSequence() {

@@ -13,6 +13,7 @@ import frc.robot.FieldConstants.FieldZones;
 import frc.robot.FieldConstants.Grids;
 import frc.robot.FieldConstants.LoadingZone;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.effector.Effector;
 import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,6 +27,13 @@ public class StateManager extends SubsystemBase {
   public enum ScoringMode {
     CUBE,
     CONE,
+    NONE
+  }
+
+  public enum State {
+    INTAKING,
+    OUTTAKING,
+    HOLDING,
     NONE
   }
 
@@ -45,6 +53,9 @@ public class StateManager extends SubsystemBase {
   private Translation2d substationInnerCorner = new Translation2d();
   private Zone zone = Zone.NONE;
 
+  // general state
+  private State state = State.NONE;
+
   // scoring states
   private ScoringMode scoringMode = ScoringMode.NONE;
 
@@ -54,7 +65,8 @@ public class StateManager extends SubsystemBase {
   private Setpoint currentSetpoint = Setpoint.STOW;
   private int scoringLevel = 0; // 0 - 2 inclusive, corresponding to setpoint array elements
 
-  private Translation2d testingSubstationAlignPos = new Translation2d(1.45, 6.75);
+  private Translation2d anishieStinky =
+      new Translation2d(1.45, 6.75); // this is actually testing pose, dont mind the name
 
   private StateManager() {
     this.currentSetpoint = Setpoint.STOW;
@@ -70,6 +82,20 @@ public class StateManager extends SubsystemBase {
       instance = new StateManager();
     }
     return instance;
+  }
+
+  public void setState(State state) {
+    this.state = state;
+  }
+
+  public State getState() {
+    return state;
+  }
+
+  public void updateState() {
+    if (state == State.INTAKING) {
+      if (Effector.getInstance().hasGamepiece()) state = State.HOLDING;
+    }
   }
 
   public void setScoringLevel(int level) {
@@ -88,7 +114,7 @@ public class StateManager extends SubsystemBase {
     if (currentSetpoint != s) currentSetpoint = s;
   }
 
-  public void setSetpointTesting() {
+  public void debugSetSetpoint() {
     setCurrentSetpoint(Setpoint.CONE_MID);
   }
 
@@ -149,8 +175,7 @@ public class StateManager extends SubsystemBase {
   }
 
   public Pose2d getSubstationPathfindingTargetPose() {
-    pathfindingSubstationTargetPose =
-        allianceFlip(new Pose2d(testingSubstationAlignPos, Rotation2d.k180deg));
+    pathfindingSubstationTargetPose = allianceFlip(new Pose2d(anishieStinky, Rotation2d.k180deg));
     return pathfindingSubstationTargetPose;
   }
 
@@ -235,16 +260,17 @@ public class StateManager extends SubsystemBase {
   @Override
   public void periodic() {
     updatePoses();
-    Logger.recordOutput(
-        "State Manager/Setpoint",
-        getSetpointWithUpdate()); // TODO temporary, change to getSetpoint after intake/outtake
+    updateState();
+    Logger.recordOutput("State Manager/State", state);
+    Logger.recordOutput("State Manager/Setpoint", getSetpointWithUpdate());
     // exists
     Logger.recordOutput("State Manager/Scoring Mode", scoringMode);
-    Logger.recordOutput("Scoring Level", scoringLevel);
-    Logger.recordOutput("State Manager/Nearest Node", getClosestNodePose());
-    Logger.recordOutput("State Manager/Pathfinding Node Pose", pathfindingNodeTargetPose);
+    Logger.recordOutput("State Manager/Scoring Level", scoringLevel);
+    Logger.recordOutput("State Manager/Pathfinding/Nearest Node", getClosestNodePose());
     Logger.recordOutput(
-        "State Manager/Pathfinding Substation Pose", pathfindingSubstationTargetPose);
+        "State Manager/Pathfinding/Pathfinding Node Pose", pathfindingNodeTargetPose);
+    Logger.recordOutput(
+        "State Manager/Pathfinding/Pathfinding Substation Pose", pathfindingSubstationTargetPose);
     Logger.recordOutput("State Manager/Zones/Current Zone", zone);
     Logger.recordOutput("State Manager/Zones/Scoring Wall Corner", scoringWallCorner);
     Logger.recordOutput("State Manager/Zones/Scoring Feeder Corner", scoringFeederCorner);
